@@ -1,0 +1,20 @@
+\documentclass[thesis.tex]{subfiles} 
+\begin{document}
+
+\section{Motivation}
+
+This topic is relevant both to the news media, who stand to make money off of being able to day-after-day produce accurate and/or exciting predictions, and to political campaigns and organizations, who use the information to inform decision-making. The application to news media should be familiar to a reader who has heard of Nate Silver \citeyearpar{Silver:2012aa}---in this section, we describe the application to campaign strategy.
+
+Many election cycles have a number of ``battleground'' or ``swing'' states which have no clear winner. Campaigns must strategically allocate resources to these states in order to win the majority of Electoral College votes.
+
+\cite{Merolla:2005aa} compare the election cycle to a Blotto process, where opponents have no pure equilibrium strategy. A Blotto process describes a game similar to the Electoral College, where opponents must allocate resources across multiple battlefields to win a majority of battles. In a symmetric game, where each side has equivalent resources, the best strategy is a mixed strategy, where players choose moves from a probability distribution which maximizes their chances of winning.
+
+We present an example of the game: tomorrow morning, you battle Colonel Blotto. Each of you has 100 soldiers to deploy among three battlefields. Whoever wins the most battles wins the war. We see that if you and Blotto play, respectively, \begin{equation*}\begin{aligned}
+	(50, 50, 0) \text{ vs } (33, 33, 34),
+\end{aligned}\end{equation*} then you win. However, if Blotto decides to play a different strategy, \begin{equation*}\begin{aligned}
+	(50, 50, 0) \text{ vs } (60, 0, 40),
+\end{aligned}\end{equation*} then you lose. For every strategy, there is an opposing strategy that beats it.
+
+Forecasting elections plays into this in the forecasting of ``safe'' and ``unsafe'' states---imagine playing a game of Blotto, where each battle has a (unknown) handicap towards one side or the other. Ideally, you want to deploy the minimum amount of resources necessary to win to a battle, so you have more resources for other battles. If you have more information than your opponent on what handicaps are where, then you can more effectively allocate your resources.
+
+\end{document}

@@ -1,0 +1,42 @@
+\documentclass[12pt]{article}
+
+\usepackage{thesis}
+\AtEndDocument{\bibliography{references}}
+
+\begin{document}
+
+\maketitle
+\tableofcontents
+
+\subfile{introduction}
+\subfile{motivation}
+\subfile{before-opinion-polls}
+\subfile{multilevel-and-state-deviance}
+\subfile{opinion-polls}
+\subfile{bayesian-inference}
+\subfile{lock-model}
+\subfile{markov-chains}
+\subfile{metropolis-hastings}
+\subfile{gibbs-sampling}
+\subfile{strausswalks}
+% \subfile{conclusion}
+
+\end{document}
+
+\begin{comment}
+The year leading up to a presidential election is full of polls and speculation, necessitating a study of the measure of uncertainty surrounding predictions. Given the true proportion who intend to vote for a candidate, one can easily compute the variance in poll results based on the size of the sample. However, here, we wish to compute the forecast uncertainty given the poll results of each state at some point before the election. To do this, we need not only the variance of a sample proportion but also an estimate for how much the true proportion varies in the months before the election and a prior distribution for state-level voting patterns. We base our prior distribution on the 2004 election results and use these to improve our estimates and to serve as a measure of comparison for the predictive strength of preelection polls.
+
+This paper merges prior data (the 2004 election results) and the poll data described above to give posterior distributions for the position of each state relative to the national popular vote. For the national popular vote, we use a prior determined by Douglas Hibbs’s ‘‘bread and peace model’’ (Hibbs 2008) and again merge with our SurveyUSA poll data.
+
+Our goal is not to estimate public opinion at any particular point in time but to forecast public opinion. Although methods such as poll aggregation may work well for estimating current opinion, models such as the Bayesian one provided here are more robust to preelection fluctuations. Our method integrates estimates not specific to a certain point in time with current poll estimates, as we believe the combination to be more powerful than either alone for estimating future election results.
+
+The political positions of the states are consistent in the short term from year to year; for example, New York has strongly favored the Democrats in recent decades, Utah has been consistently Republican, and Ohio has been in the middle. We begin our analysis by quantifying the ability to predict a state outcome in a future election using the results of past elections. We do this using the presidential elections of 1976–2004. We chose not to go back beyond 1976 since state results correlate strongly (.79 < r < .95) for adjacent elections after 1972, whereas the correlation between the 1972 and the 1976 elections is only .11.
+\end{comment}
+
+\begin{comment}
+More things to do:
+- rejection sampling
+- multilevel/hierarchical models / partial pooling / shrinkage (E-M?)
+- that paper on Deep MRP
+- the state thing from Strauss? ugh. it's not that interesting---Gauss-Lagrange quadrature (whatever that is, or MLE or whatever), and actually the thing about using only the last two polls could be interesting
+\end{comment}

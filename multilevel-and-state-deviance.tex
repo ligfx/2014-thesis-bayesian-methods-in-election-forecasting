@@ -1,0 +1,45 @@
+\documentclass[thesis.tex]{subfiles}
+\begin{document}
+
+\section{Multi-level regession and state deviance between election cycles}
+
+For states, though, we can also note that deviations from the national average are relatively consistent between election cycles \cite{Lock:2010aa}. This means that a state that leans more Democratic than the nation during one election, will probably lean the same way during the next election.
+
+\cite{Lock:2010aa} handle this using a multilevel model, to compensate for the little number of data points for each state. Multilevel modeling takes advantage of both within-group and between-group information. Groups with poor information will get pulled towards the mean, and groups with rich information will weight their own observations more highly. The technique is also used in education, demographics, and geographical data \citep{Ghitza:2013aa,Gelman:2006aa,Aitkin:1981aa}.
+
+In this case, we want to estimate variance in state deviations from the national vote between election cycles, \[
+	\frac{1}{N}\sum_{y=1}^N (d_{s, y} - d_{s, y - 1})^2
+\], where \(N\) denotes the total number of election cycles we're looking at and \(d_{s, y}\) denotes the deviation from the national vote in election cycle \(y\) for state \(s\).
+
+Our multilevel model, then, looks like \begin{equation}
+	\left[(d_{s, y} - d_{s, y - 1})^2\right]_i \sim \mu + \gamma_s + \epsilon_i, \quad
+	\gamma_s \sim \N(0, \sigma_\gamma^2), \quad
+	\epsilon_i \sim \N(0, \sigma_\epsilon^2),
+\end{equation} where \(\mu + \gamma_s\) will give us the estimated variance in deviations for state \(s\). We can write this in matrix form, with \(\vec{D}\) denoting our observations of deviations squared and \(\vec{S}\) indicating group membership for each observation, as \begin{align}
+	\vec{D} \sim \vec{1}\mu + \vec{S}\vec{\gamma} + \vec{\epsilon}.
+\end{align}
+
+The typical method of deriving estimates from multilevel models is using the Expectation-Maximization algorithm with a Restricted Maximium-Likelihood Estimator (REML). \cite{Harville:1977aa} describes REML in detail, and \cite{Aitkin:1981aa} gives an example of estimating a model using Expectation-Maximization.
+
+We follow \cite{Lock:2010aa}, \cite{Gelman:2006aa}, and \cite{Gelman:2007aa}, and fit the multilevel model using the R function \texttt{lmer} \citep{lme4},
+\begin{center}
+	\texttt{model <- lmer(deviations \(\sim\) (1 | state), data=statedata)}
+\end{center}
+
+% TODO: Graph?
+
+\begin{comment}
+
+For states, though, we can also note that deviations from the national average are relatively consistent between election cycles \cite{Lock:2010aa}. Here's a graph maybe. This means that a state that leans more Democratic than the nation during one election, will probably lean the same way during the next election. The model looks sort of like: \[
+	a model,
+\] where the things mean this. This gives us the mean for each state, this is how you put it into \texttt{lmer}.
+
+We handle this using multilevel modeling, as in \cite{Lock:2010aa}. \textbf{What is multi-level regression?} Also called mixed-effects (it's like balancing between no effects and fixed effects). Takes advantage of both within-group and between-group information. If a group has very little data (like, state deviations from national vote over the last seven elections), it's ``shrunk'' towards the overall mean (shrinkage estimation). Also used in education, demographics, and geographical data \citep{Ghitza:2013aa,Gelman:2006aa,Aitkin:1981aa}.
+
+The general ideas behind multilevel modeling were described in \cite{Harville:1977aa}, we see some equivalent approaches in \cite{Goldstein:1986aa} and \cite{Goldstein:1989aa}, and the modern approach using REML and Expectation-Maximization is described through example in \cite{Aitkin:1981aa}. \cite{Gelman:2006aa} gives a recent example of using and interpreting the results of multilevel modeling, using the \texttt{lme4} \citep{lme4} package in R \citep{R}. For more information, see \cite{Gelman:2007aa}.
+
+Some people also solve it using the Bayesian approach \citep{Gelman:2003aa,Price:1996aa}, but we won't use that.
+
+\end{comment}
+
+\end{document}

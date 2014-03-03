@@ -1,0 +1,49 @@
+\documentclass[thesis.tex]{subfiles}
+\begin{document}
+
+
+
+\section{Bayesian inference for incorporating more data}
+
+To incorporate polling data with predictions from fundamentals, we use the method of Bayesian inference.
+
+Given a prior distribution over some outcome, \(\Pr(\theta)\), and data \(\vec{x}\), we use Bayes' Rule \[ \Pr(A | B) = \frac{\Pr(B | A) \Pr (A)}{\Pr(B)} \] to get our posterior distribution. We say that \[
+	\Pr(\theta | \vec{x}) \propto \Pr(\vec{x} | \theta) Pr(\theta),
+\] where we drop the denominator because it doesn't include \(\theta\) in any way and thus becomes part of the uniquely-determined normalization constant for the distribution.
+
+\begin{comment}
+\textbf{Claim:} (note we can drop the bottom part, because it doesn't include \(\theta\). Probability functions are uniquely determined by their inside minus any multiplicative constant. Why is this? Properties of integrals.)
+\end{comment}
+
+\begin{comment}
+We can give an example here, of coin flipping, which I don't know if it's interesting or not (and not really relevant).
+\end{comment}
+
+Luckily, we don't have to necessarily write out probability density functions and ``read off'' what family the posterior distribution is. Conjugate families of distributions provide an easy method for calculating posterior distributions based on the parameters of the prior and the data. We show two useful conjugate families, the Normal distribution with unknown mean, and the Normal distribution with unknown precision (the inverse of variance).
+
+\bigskip
+
+\noindent\textbf{Normal with unknown mean:} Given a distribution for data $x \sim \N(\mu, \tau^{-1})$ and a prior on the mean $\mu \sim \N(\mu_0, \tau_0^{-1})$, we see that: \begin{align*}
+\Pr(\mu | x, \tau) &\propto \Pr(x | \mu, \tau)\Pr(\mu) \\
+&\propto \exp\left( -\frac{\tau(x-\mu)^2}{2} \right)\exp\left( -\frac{\tau_0(\mu - \mu_0)^2}{2} \right) \\
+&= \exp\left[ -\frac12\left( \tau x^2 - 2x\mu\tau + \tau\mu^2 + \tau_0\mu^2 - 2\mu\mu_0\tau_0 + \tau_0\mu_0^2 \right) \right]
+\intertext{All terms not involving $\mu$ can be dropped, because they'll work out in the normalization constant.}
+&\propto \exp\left[  -\frac12(\mu(\tau + \tau_0) -2\mu(x\tau + \mu_0\tau_0)  \right] \\
+&= \exp\left[  -\frac12(\tau_0 + \tau)\left(  \mu - \frac{x\tau + \mu_0\tau_0}{\tau_0 + \tau}  \right)^2\right]
+\end{align*}
+So the posterior distribution is: \[
+\mu | x, \tau \sim \N\left(  \frac{x\tau + \mu_0\tau_0}{\tau_0 + \tau}, \text{ }\tau_0 + \tau  \right).
+\]
+
+\bigskip
+
+\noindent\textbf{Normal with unknown precision:} Given a a distribution for $n$ i.i.d. data points $x_i \sim \N(\mu, \tau)$, and a prior on the precision $\tau \sim \Gamma(\alpha, \beta)$, we see that: \begin{align*}
+\Pr(\tau | \vec{x}, \mu) &\propto \Pr(\vec{x} | \tau, \mu)\Pr(\tau) \\
+&\propto \prod\left(\tau^{\frac{1}{2}}\exp\left(  -\frac{\tau(x_i - \mu)^2}{2}  \right)\right) \tau^{\alpha-1}\exp(-\beta\tau) \\
+&= \tau^{\alpha + \frac{n}{2} - 1}\exp\left(  -\tau\left(\beta + \frac{\sum(x_i + \mu)^2}{2}\right)  \right)
+\end{align*}
+So the posterior distribution is \[
+\tau | x, \mu \sim \Gamma\left(  \alpha + \frac{n}{2}, \text{ } \beta + \frac{\sum(x_i + \mu)^2}{2}  \right).
+\]
+
+\end{document}
