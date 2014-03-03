@@ -1,0 +1,82 @@
+\documentclass[12pt]{article}
+
+\usepackage[margin=1.25in]{geometry}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+
+\usepackage[T1]{fontenc}
+\usepackage[bitstream-charter]{mathdesign}
+
+\renewcommand*{\sfdefault}{qhv}
+
+\usepackage{titlesec}
+\titleformat*{\section}{\huge\bfseries\sffamily}
+\titleformat*{\subsection}{\Large\bfseries\sffamily}
+
+\usepackage[parfill]{parskip}
+\begingroup
+    \makeatletter
+    \@for\theoremstyle:=definition,remark,plain\do{%
+        \expandafter\g@addto@macro\csname th@\theoremstyle\endcsname{%
+            \addtolength\thm@preskip\parskip
+            }%
+        }
+\endgroup
+
+
+\usepackage[english]{babel}
+\usepackage[pangram]{blindtext}
+
+\usepackage{etoolbox}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\theoremstyle{remark}
+\newtheorem{example}{Example}[section]
+
+\begin{document}
+
+\section{Markov Chains}
+
+\begin{definition}
+We call a sequence of random variables $(X_t)$ a \textbf{Markov Chain} if it has the Markovian property \[ P(X_{t+1} | X_t, X_{t-1},\dots,X_0) = P(X_{t+1} | X_t) \] i.e. the next state is fully determined by the current state.
+
+We use the notation $p_{ij} = P(X_{t+1}  = j| X_t = i)$ to refer to the probability of moving from state $i$ to state $j$. If we have finitely many states, then we can describe the chain as a matrix \[ \mathbf{P} = [p_{ij}] \]
+\end{definition}
+
+An important idea here is, given the Markovian property, is there a point at which our starting state does not matter? i.e. regardless of where we started, are there some long-run probabilities of being in each state?
+
+\begin{definition}
+An \textbf{irreducible Markov chain} is one where it is possible to move from every state to every other state eventually. If it is possible to move from state $i$ to state $j$, and vice-versa, then we say they \textbf{communicate}, denoted $i \leftrightarrow j$.
+
+A set of states which communicate with each other and do not communicate with any states outside of the set is called a \textbf{communicating class}. A Markov Chain with only one communicating class is called irreducible.
+\end{definition}
+
+\begin{definition}
+An \textbf{aperiodic Markov chain} is one where every state is aperiodic. A state is \textbf{periodic} if any return to the state only happens in multiples of $k$ time steps where $k > 1$.
+
+If an irreducible Markov chain has a state which is aperiodic, then the entire chain is aperiodic.
+\end{definition}
+
+\begin{definition}
+A \textbf{recurrent state} is such that, when starting at that state, the chain will return to the state at some point in the future with probability 1.
+
+If a chain is irreducible and finite, then every state is recurrent.
+\end{definition}
+
+\begin{example}[Drunkard's Walk]
+This is irreducible and infinite, but still recurrent.
+\end{example}
+
+\begin{example}[Biased Drunkard's Walk]
+Irreducible and infinite, not recurrent.
+\end{example}
+
+\begin{definition}
+An \textbf{ergodic Markov chain} is one which is irreducible, aperiodic, and recurrent for every state.
+\end{definition}
+
+\Blindtext
+
+\end{document}

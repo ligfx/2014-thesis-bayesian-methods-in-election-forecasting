@@ -1,0 +1,7 @@
+* http://www.ams.org/bookstore/pspdf/mbk-58-prev.pdf
+
+If you need fonts, do:
+
+```
+sudo tlmgr install mathdesign ly1 charter
+```
