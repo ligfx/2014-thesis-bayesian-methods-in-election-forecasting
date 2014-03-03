@@ -1,0 +1,26 @@
+\documentclass[12pt]{article}
+
+\usepackage[margin=1.5in]{geometry}
+
+\usepackage{titling}
+\setlength{\droptitle}{-50pt}
+
+\title{Summary: Getting a grip on delays in packet networks}
+\author{Michael Maltese}
+\date{14 December 2013}
+
+\usepackage{parskip}
+
+\begin{document}
+
+\maketitle
+
+\emph{I attended this talk on 4 December 2013 at Davidson Lecture Hall. Almut Burchard from the University of Toronto presented.}
+
+Analyzing delay in packet networks is difficult. Classically analysis has focused on queuing theory, worst-case analysis, or asymptotic analysis. Burchard presents a ``network calculus'' approach based on a ``min-plus'' algebra that lets her make stochastic claims about network models. The problem deals with a lot of arg-infinums and -supremums, and the introduction of random variables makes the model even more complicated. Burchard and her group have managed to make a feasible model in certain situations, which gives them better results than the standard approach. Their model also shows how networks react to different types of traffic, among others heavy-tailed processes and self-similar processes.
+
+\end{document}
+
+Delay analysis in packet networks is notoriously hard. Statistical properties of traffic, link scheduling, and subtle correlations between traffic at different nodes increase the difficulty of characterizing the variable portion of delays. Historically, performance analysis has relied on two fundamentally different tools: Classical queuing theory (to predict delay distributions in a network where nodes operate independently and time correlations can be neglected), and worst-case analysis (to understand complex scheduling algorithms in smaller networks). Beyond that, asymptotic methods have been used to determine stability regions and exponential decay rates.
+
+In this talk, I will discuss recent progress on the end-to-end delay analysis for a traffic flow in a packet network, using a stochastic network calculus approach that has been developed over the last twenty years. I will consider the following questions: What is the relative impact of scheduling and statistical multiplexing on delays at a packet switch? How do end-to-end delays scale as the number of traversed nodes is increased? What do self-similar and heavy-tailed traffic arrival processes contribute to the delay? (Joint work with J. Liebeherr and his group.)

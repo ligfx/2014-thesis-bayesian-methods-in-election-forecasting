@@ -1,0 +1,5 @@
+Michael Maltese
+MATH 190 Fall 2013
+thesis_topic
+
+In my thesis I will examine political election forecasting models, inspired by Nate Silver's popularization of the field and his techniques of combining polling data with other factors. Current research in this area utilizes many Bayesian statistical techniques to approach this problem. Bayesian statistics are a variant of classical frequentist statistics that allows a model to specify a prior belief, such as macro-level factors in a presidential election, and then update its beliefs based on new data, such as opinion polls.

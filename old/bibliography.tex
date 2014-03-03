@@ -1,0 +1,82 @@
+\documentclass[twoside]{article}
+
+\usepackage{microtype}
+
+%% \usepackage{titlesec} 
+%% \titleformat{\section}[block]
+%%     {\usefont{T1}{qhv}{b}{n}\selectfont\large}
+%%     {\thesection.}{1em}{}
+
+\usepackage[usenames,dvipsnames,svgnames,table]{xcolor}
+\definecolor{darkblue}{rgb}{0.,0.,0.4}
+\definecolor{darkred}{rgb}{0.5,0.,0.}
+
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks,
+  citecolor=darkred,
+  linkcolor=darkblue,
+  urlcolor=blue}
+\usepackage[round]{natbib}
+\bibliographystyle{apalikedoi}
+\setlength{\bibsep}{0cm}
+\usepackage{etoolbox}
+
+\makeatletter
+
+\pretocmd{\NAT@citex}{%
+  \let\NAT@hyper@\NAT@hyper@citex
+  \def\NAT@postnote{#2}%
+  \setcounter{NAT@total@cites}{0}%
+  \setcounter{NAT@count@cites}{0}%
+  \forcsvlist{\stepcounter{NAT@total@cites}\@gobble}{#3}}{}{}
+\newcounter{NAT@total@cites}
+\newcounter{NAT@count@cites}
+\def\NAT@postnote{}
+
+% include postnote and \citet closing bracket in hyperlink
+\def\NAT@hyper@citex#1{%
+  \stepcounter{NAT@count@cites}%
+  \hyper@natlinkstart{\@citeb\@extra@b@citeb}#1%
+  \ifnumequal{\value{NAT@count@cites}}{\value{NAT@total@cites}}
+    {\ifNAT@swa\else\if*\NAT@postnote*\else%
+     \NAT@cmt\NAT@postnote\global\def\NAT@postnote{}\fi\fi}{}%
+  \ifNAT@swa\else\if\relax\NAT@date\relax
+  \else\NAT@@close\global\let\NAT@nm\@empty\fi\fi% avoid compact citations
+  \hyper@natlinkend}
+\renewcommand\hyper@natlinkbreak[2]{#1}
+
+% avoid extraneous postnotes, closing brackets
+\patchcmd{\NAT@citex}
+  {\ifNAT@swa\else\if*#2*\else\NAT@cmt#2\fi
+   \if\relax\NAT@date\relax\else\NAT@@close\fi\fi}{}{}{}
+\patchcmd{\NAT@citex}
+  {\if\relax\NAT@date\relax\NAT@def@citea\else\NAT@def@citea@close\fi}
+  {\if\relax\NAT@date\relax\NAT@def@citea\else\NAT@def@citea@space\fi}{}{}
+
+\makeatother
+
+
+\usepackage{titling}
+\setlength{\droptitle}{-40pt}
+
+\usepackage[margin=1in]{geometry}
+
+\begin{document}
+
+\title{\textbf{Thesis Preliminary Bibliography}}
+\author{Michael Maltese}
+\date{4 October 2013}
+\maketitle
+
+In my thesis I'm looking at political forecasting models, inspired by Nate Silver's popularization of the field \citeyearpar{signalnoise}.
+
+I started with \citet{bayescombo}, which estimates states' deviation from national votes based on a Bayesian mixture model of a good prior \citep{breadpeace} with polling data. (They also use a mixed-effects linear model at one point to compensate for small sample data on states' political views variation, so I detoured through \citet{multilevelcan} for a better explanation of the technique.)
+
+Currently, I'm working through \citet{strausswalk}, which builds a more complicated model using polling data, expresses variance over time as a random walk (following \citealt{jackman}), and uses Metropolis-Hastings estimators to fit the final model.
+
+Next, I think I'd like to look at multilevel regression and poststratification techniques \citep{deepinteractions,gayrights}, used to estimate parameters for ``small subsets of a population that are defined by multiple demographic and geographic characteristics" \citep{deepinteractions}.
+
+\nocite{*}
+\bibliography{thesis}
+\end{document}

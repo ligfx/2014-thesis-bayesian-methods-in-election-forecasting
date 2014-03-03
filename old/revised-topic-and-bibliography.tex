@@ -1,0 +1,98 @@
+\documentclass[12pt]{article}
+
+\usepackage{microtype}
+
+%% \usepackage{titlesec} 
+%% \titleformat{\section}[block]
+%%     {\usefont{T1}{qhv}{b}{n}\selectfont\large}
+%%     {\thesection.}{1em}{}
+
+\usepackage[usenames,dvipsnames,svgnames,table]{xcolor}
+\definecolor{darkblue}{rgb}{0.,0.,0.4}
+\definecolor{darkred}{rgb}{0.5,0.,0.}
+
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks,
+  citecolor=blue,
+  linkcolor=blue,
+  urlcolor=blue}
+\usepackage[round]{natbib}
+\bibliographystyle{apalikedoi}
+\setlength{\bibsep}{0cm}
+\usepackage{etoolbox}
+
+\makeatletter
+
+\pretocmd{\NAT@citex}{%
+  \let\NAT@hyper@\NAT@hyper@citex
+  \def\NAT@postnote{#2}%
+  \setcounter{NAT@total@cites}{0}%
+  \setcounter{NAT@count@cites}{0}%
+  \forcsvlist{\stepcounter{NAT@total@cites}\@gobble}{#3}}{}{}
+\newcounter{NAT@total@cites}
+\newcounter{NAT@count@cites}
+\def\NAT@postnote{}
+
+% include postnote and \citet closing bracket in hyperlink
+\def\NAT@hyper@citex#1{%
+  \stepcounter{NAT@count@cites}%
+  \hyper@natlinkstart{\@citeb\@extra@b@citeb}#1%
+  \ifnumequal{\value{NAT@count@cites}}{\value{NAT@total@cites}}
+    {\ifNAT@swa\else\if*\NAT@postnote*\else%
+     \NAT@cmt\NAT@postnote\global\def\NAT@postnote{}\fi\fi}{}%
+  \ifNAT@swa\else\if\relax\NAT@date\relax
+  \else\NAT@@close\global\let\NAT@nm\@empty\fi\fi% avoid compact citations
+  \hyper@natlinkend}
+\renewcommand\hyper@natlinkbreak[2]{#1}
+
+% avoid extraneous postnotes, closing brackets
+\patchcmd{\NAT@citex}
+  {\ifNAT@swa\else\if*#2*\else\NAT@cmt#2\fi
+   \if\relax\NAT@date\relax\else\NAT@@close\fi\fi}{}{}{}
+\patchcmd{\NAT@citex}
+  {\if\relax\NAT@date\relax\NAT@def@citea\else\NAT@def@citea@close\fi}
+  {\if\relax\NAT@date\relax\NAT@def@citea\else\NAT@def@citea@space\fi}{}{}
+
+\makeatother
+
+
+\usepackage{titling}
+\setlength{\droptitle}{-40pt}
+
+\usepackage[margin=1.5in]{geometry}
+
+\begin{document}
+
+\title{\textbf{Revised Topic and Bibliography}}
+\author{Michael Maltese}
+\date{8 November 2013}
+\maketitle
+
+\section{Introduction}
+
+Nate Silver and other statistically-minded political forecasters garnered much acclaim in the 2012 presidential election cycle for their unashamedly mathematical approach to political punditry and for the resulting accuracy of their models. Silver went on to become something of a pop science celebrity, popularizing his idea of looking at the world through a Bayesian lens \citep{Silver:2012aa}.
+
+In this work we examine different political election forecasting models and the different statistical and mathematical tools behind them.
+
+This topic is relevant both to the news media, who stand to make money off of being able to day-after-day produce accurate and/or exciting predictions, and to political campaigns and organizations, who use the information to inform decision-making. For example, models which specifically focus on figuring out battleground states are a useful tool for deciding where to allocate vital campaign money \citep{Strauss:2007aa}.
+
+All models looked at in this work follow a similar strategy of incorporating opinion poll data at various dates before the election, and attempting to track the future possibilities and minimize the variance of their forecasting. In American presidential races, polling data is provided on both a national and state level, and by many different organizations (Gallup, Rasmussen, PPP, etc). Polling data is inherently both inaccurate (a single sample probably will not represent the entire country, and people's opinions can change over a few months) and biased (organizations have political bents).
+
+Some models deal with the biased nature of polling data by simply averaging all available polls under the assumption that biases cancel out \citep{Wang:2012aa} and others specifically analyze each organization and assign a measure of bias \citep{Silver:2012aa}. \citet{Strauss:2007aa} attempts to estimate biases directly from the data during a live campaign, requiring the use of a more computationally intensive model and Markov-Chain Monte Carlo methods.
+
+Polls also suffer from the ``early bird'' problem: people might report their preferences early in the campaign, and then later change their minds. Models typically handle this by using an estimate of how much information polls carry at different dates in a campaign, and initialize their model using a prior forecast from first principles.
+
+\citet{Lock:2010aa}, for example, use historical data on the relevance of polls at different dates in the campaign season (obtained with the help of mixed-effects linear regression, a technique which compensates for small factor samples inside a larger overall sample, described further by \citealt{Gelman:2006aa}) and combines it with a prior forecast based on economic and military events \citep{Hibbs:2008aa}.
+
+\citet{Strauss:2007aa} and \citet{Jackman:2005aa}, on the other hand, develop more complicated models estimating poll variance from theoretical principles as a random walk.
+
+Bayesian statistics, a variant of classical frequentist statistics, provides the theoretical underpinning for many of these models and tools. They allow a model to specify a prior belief, such as macro-level factors in a presidential election (like economic and military events, as interpreted by \citealt{Hibbs:2008aa}), and then update that beliefs based on new data, such as opinion polls. The specific technique of Bayesian inference is a way to mathematically solve the problem of weighting between different data based on how much information we think they contain.
+
+The statistical tools and ideas used here have further applications in the political world. \citet{Lock:2010aa} note that ``an approach such as described here could be applied to study changes in public opinion and other phenomena with wide national swings and fairly stable spatial distributions relative to the national average,'' such as the application of these ideas by \citet{Lax:2009aa} to opinions and state policies on gay rights.
+
+Other models incorporate more arcane techniques to, for example, examine voting turnout among demographic groups \citep{Ghitza:2013aa}, an important piece of information for political campaigns.
+
+\nocite{*}
+\bibliography{thesis}
+\end{document}

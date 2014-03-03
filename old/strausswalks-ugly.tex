@@ -1,0 +1,83 @@
+\documentclass[12pt]{article}
+
+\usepackage{mm-bib}
+
+\usepackage{amsmath}
+
+\DeclareMathOperator{\G}{G}
+\DeclareMathOperator{\N}{N}
+\DeclareMathOperator{\Uniform}{Uniform}
+
+\renewcommand{\bibsection}{}
+
+\begin{document}
+\begin{flushleft}{\normalfont\LARGE\bfseries Notes on `Florida or Ohio? Forecasting presidential state
+outcomes using reverse random walks'}\end{flushleft}
+
+
+\nocite{strausswalks}
+\bibliography{thesis}
+
+\tableofcontents
+
+\section{Reverse random walks}
+
+TODO. Basically, next section, but without house biases. Forward random walks work the same, but you need to be careful where you start them! e.g. Jackman (2005) uses a forward random walk starting at the first available poll data, then walks forward to the expected election date. Strauss bases his model off of Jackman's, except walks backwards from the election day. This is maybe better because it lets him incorporate a more meaningful prior??
+
+And how to solve them using the Gibbs sampler (find the conditional distributions by Bayesian inference, yadda yadda).
+
+\section{National forecast}
+
+\addcontentsline{toc}{subsection}{Model}
+Aaron Strauss models national preferences as a reverse random walk, \[\alpha_t \sim \N(\alpha_{t-1}, \omega^2)\]where $\alpha_0$ is the election result and $\omega^2$ as the variance of the shocks. He incorporates polls as \[y_i \sim \N(\alpha_t + \delta_j, s_i^2)\] where $\delta_j$ is the ``house'' bias for the organization conducting the poll, $s_i^2$ is poll variance $\frac{y_i(1-y_i)}{q_i}$, and $q_i$ is the number of respondents included in the poll. He assumes that house biases cancel out, i.e. $\sum \delta_j = 0$.
+
+\addcontentsline{toc}{subsection}{Priors}
+He uses priors (for the 2008 election) of
+\begin{align*}
+\alpha_0 &\sim \N(0.522, (0.0253)^2)
+\intertext{for the 2008 election (estimated in 2004 from first principles) and}
+\omega &\sim \Uniform(0, (0.01)^2) \\
+\delta_j &\sim \N(0, (0.1)^2)
+\end{align*}
+which he justifies by noting that
+\begin{quote}
+The day-to-day shocks of the campaign are assumed to fall within plus or minus 2 percentage points 95\% of the time (at a maximum). While specific events (e.g., conventions, debates) might cross this threshold, those are the exceptions, not the norms. \emph{[Footnote: Even conventions, which last four days, might not produce effects larger than two percentage points per day.]} The prior on house effects assumes that 95\% of bias is less than 20\% (in either direction): all reputable polling organizations should easily pass that standard.
+\end{quote}
+
+\addcontentsline{toc}{subsection}{Gibbs sampling}
+Then, the conditional distributions for the Gibbs sampler are:
+\begin{enumerate}
+	\item $\alpha_t$: the preferences at each time period, as the weighted average of the two time periods adjoining, $\N(\alpha_{t+1}, \omega^2)$ and $\N(\alpha_{t-1}, \omega^2)$ (except for the time periods on either end, which have only one adjoining period), and of any polls for that time period, debiased, $\N(y_i - \delta_j, s_i^2)$.
+	
+	\item $\tau$, where $\tau = \omega^{-2}$: the posterior for precision of a normal-gamma model with unknown mean and variance, where we are estimating the variance between neighboring time periods, $\frac{\sum(\alpha_{t+1} - \alpha_t)^2}{T-2}$, and the prior doesn't really make sense here so we just resample until we get $\omega^2 < (0.01)^2$.
+	
+	\item $\delta_j$: the house biases, as the posterior of a combination of the prior $\N(0, (0.1)^2)$ (note that in the next section we refer to the variance of this prior, $(0.1)^2$, as $d^2$, following Strauss's example) and the differences of all polls by that organization from true preferences, $\N(y_i - \alpha_t, s_i^2)$.
+\end{enumerate}
+We can write out these conditional distributions for the Gibbs sampler as:
+\begin{align*}
+% alpha
+\alpha_t &\sim \N\left(\frac{  \frac{\alpha_{t+1} + \alpha_{t-1}}{\omega^2} + \sum\frac{y_i - \delta_j}{s_i^2}}{ \frac{2}{\omega^2} + \sum\frac{1}{s_i^2} }, \text{~} \frac{1}{\frac{2}{\omega^2} + \sum\frac{1}{s_i^2}}\right) \\
+% tau
+\tau &\sim \G\left(
+\frac{T-2}{2}
+, \text{~}
+\frac{\sum(\alpha_{t+1} - \alpha_{t})^2}{2}
+%more height
+\vphantom{\frac{  \frac{\alpha_{t+1} + \alpha_{t-1}}{\omega^2} + \sum\frac{y_i - \delta_j}{s_i^2}}{ \frac{2}{\omega^2} + \sum\frac{1}{s_i^2} }, \text{~} \frac{1}{\frac{2}{\omega^2} + \sum\frac{1}{s_i^2}}}
+%
+\right) \mathcal{I}(\tau > 10,000) \\
+% delta
+\delta_j &\sim \N\left(\frac{ \sum\frac{y_i - \alpha_t}{s_i^2}}{\frac{1}{d^2} + \sum \frac{1}{s_i^2}}, \text{~} \frac{1}{ \frac{1}{d^2} + \sum \frac{1}{s_i^2}}
+%more height
+\vphantom{\frac{  \frac{\alpha_{t+1} + \alpha_{t-1}}{\omega^2} + \sum\frac{y_i - \delta_j}{s_i^2}}{ \frac{2}{\omega^2} + \sum\frac{1}{s_i^2} }, \text{~} \frac{1}{\frac{2}{\omega^2} + \sum\frac{1}{s_i^2}}}
+%
+\right)
+\end{align*}
+and Bob's your uncle!
+
+
+\section{State forecasts}
+
+Coming soon.
+
+\end{document}

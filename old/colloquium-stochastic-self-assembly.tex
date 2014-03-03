@@ -1,0 +1,22 @@
+\documentclass[12pt]{article}
+
+\usepackage[margin=1.5in]{geometry}
+
+\usepackage{titling}
+\setlength{\droptitle}{-50pt}
+
+\title{\textbf{Summary: Stochastic self-assembly and cluster distributions in biology}}
+\author{Michael Maltese}
+\date{14 December 2013}
+
+\usepackage{parskip}
+
+\begin{document}
+
+\maketitle
+
+\emph{I attended this talk on 4 December 2013 at Davidson Lecture Hall. Tom Chou from UCLA presented.}
+
+One open problem in biology is modeling self-assembly, where objects combine into groups, such as when peptides on membranes self-assemble into pores through the membrane. The general approach follows the mass-action analysis of Becker and D\"oring, but there has been very little stochastic treatment of the problem. Chou compares his stochastic approach and the Becker-D\"oring approach under two scenarios: that of heterogeneous nucleation, where self-assembly is catalyzed by impurities; and homogeneous nucleation, where self-assembly is spontaneous. The stochastic approach involved developing trees of possible states of groups and monomers, transitioning according to specified probabilities, then running ``Kinetic Monte-Carlo simulations'' to find the full distribution. Chou finds that in the case of heterogeneous nucleation, the error between his KMC approach and the B-D approach is not high. In the case of homogeneous nucleation, however, the KMC approach does far better than B-D, most importantly showing the dynamics of emulsification, where adding a single extra monomer to a solution can significantly change the equilibrium distribution of groups and sizes of groups, which the B-D approach does not see.
+
+\end{document}

@@ -1,0 +1,34 @@
+\documentclass[12pt]{article}
+
+\usepackage{microtype}
+\usepackage{mm-bib}
+
+\usepackage{titling}
+\setlength{\droptitle}{-90pt}
+
+% \usepackage[margin=1.5in]{geometry}
+
+\begin{document}
+
+\title{\textbf{Thesis Preliminary Outline}}
+\author{Michael Maltese}
+\date{18 October 2013}
+\maketitle
+
+\section*{Outline}
+
+\textbf{Section 1: Introduction} will lay out the basic problems and motivation: Nate Silver \citeyearpar{Silver:2012aa} popularized presidential election forecasting in 2008 and especially 2012. I look at papers by statisticians such as Andrew Gelman and others to learn about various statistical methods for election and popular opinion forecasting and practical problems that they attack. I then delve into the math behind the models, and finally go back to the papers to analyze their methods in terms of the math that I have learned.
+
+\textbf{Section 2: Motivation} will describe a selection of papers, the problems they attack (statistically, and politically), their methods, and results. This would include, currently, \citet{Lock:2010aa} and \citet{Strauss:2007aa}, both of which focus on predicting state election results in the national presidential election. \citet{Lock:2010aa} uses basic Bayesian inference on a simple model (with references to possible other uses for ``phenomena with wide national swings and fairly stable spatial distributions'', as in \citealp{Lax:2009aa}). \citet{Strauss:2007aa} uses a more complicated model with a ``random walk'' and using Metropolis-Hastings estimators.
+
+\textbf{Section 3: Methods} will define and explain the statistical methods behind the papers mentioned in Section 2, and typical methods in Bayesian statistics and the field (this begins the ``mathy'' part). This is where I talk about basic probability and statistics and introduce the Bayesian view of statistics. I'll go into Bayesian inference and it's use in incorporating new data (updating beliefs), then different methods for creating/using models such as Markov chain Monte Carlo (MCMC) methods (which also entails explaining Markov chains), including the Metropolis-Hastings algorithm and the Gibbs sampler. Multi-level regressions need to be in here somewhere, as they are used in \citet{Lock:2010aa} and possibly MRP \citep{Ghitza:2013aa} if I get there.
+
+\textbf{Section 4: Analysis} will return to some papers mentioned in the motivation and break down their models in light of the definitions and techniques explained in the section on methods. These models can be used for examples of the techniques, letting me further explore practical applications of the math and how it performs, and whether the models actually make sense now that the reader presumably has a handle on the math.
+
+An example of something that could be in this section: \citet{Strauss:2007aa} defines an inference model for national elections specified in four parts (for a Gibbs sampler). At first I had trouble understanding intuitively what was going on, but Dr. Chandler showed me a method where you break down the models into ``what happens when the prior dominates'' and ``what happens when the new information dominates'', which I find a great way to intuitively get a grasp on Bayesian inference models (and actually helped us fix a part of the model that wasn't written out completely).
+
+\textbf{Section 5} will be the \textbf{Conclusion}.
+
+\bibliography{thesis}
+
+\end{document}

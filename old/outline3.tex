@@ -1,0 +1,54 @@
+\documentclass[12pt]{article}
+
+\usepackage{microtype}
+\usepackage{mm-bib}
+
+\usepackage{parskip}
+
+\usepackage{titling}
+\setlength{\droptitle}{-90pt}
+
+% \usepackage[margin=1.5in]{geometry}
+
+\begin{document}
+
+\title{\textbf{Thesis Revised Outline}}
+\author{Michael Maltese}
+\date{15 November 2013}
+\maketitle
+
+\section*{Outline}
+
+\textbf{Introduction}
+
+\textbf{1. Motivation}: Nate Silver \citeyearpar{Silver:2012aa} popularized election forecasting in 2008 and 2012. Election forecasting is useful for media pundits trying to draw traffic and political campaign strategists trying to allocate resources \citep{Strauss:2007aa}, among other applications. I look at various papers to learn practical problems in and statistical methods for election and popular opinion forecasting.
+
+\textbf{2. Bayesian statisics}: Much of the math in this work is based on the idea of Bayesian inference, which provides a framework for taking multiple pieces of data into account (often characterized as mixing ``prior'' knowledge and sampling data to get a ``posterior'' distribution).
+
+\textbf{3. What affects public opinion? Predicting national elections from first-principles with linear regression}: \cite{Hibbs:2008aa} and others (not very interesting) use basic linear regression to analyze the factors that go into public opinion, and provide a model for predicting national presidential elections far in advance (we'll use this as a prior).
+
+\textbf{4. Hierarchical models: a quick detour}: Talk multi-level/hierarchical/mixed-effects models \citep{Gelman:2006aa,Gelman:2007aa}, for application in next section. Maybe talk about Expectation-Maximization (one way to solve a mixed-effects model).
+
+\textbf{5. Predicting states relative positions: turns out they don't change much anyways}: \cite{Lock:2010aa} find that state relative positions don't change much in between presidential elections, so they can use a state's previous position and its between-election variance as a prior. \cite{Campbell:1992aa} uses a linear regression (returned to in \citealp{Campbell:2006aa}), similar to the work done by \cite{Hibbs:2008aa}, to estimate factors in public opinion in  voting grouped at the state level.
+
+\textbf{6. Opinion polls to the rescue}: The models above ignore a valuable source of real-time data: opinion polls! Nate Silver \citeyearpar{Silver:2012aa} is the king of this. Some potential problems with polls (which we can handle) are: house bias, error due to the fact that people change their minds, and sampling problems. Maybe give a quick rundown of what some different models do to handle these problems.
+
+\textbf{7. \emph{Bayesian combination of state polls and election forecasts}}: Examination of the model by \cite{Lock:2010aa}, using polling data, bayesian inference, priors from above.
+
+\textbf{8. The Metropolis-Hastings algorithm}: Used for estimating distributions non-analytically. Also talk about Markov chains, which provide the theoretical framework about why this actually works. A simple example on Markov Chains (see Gabe's notes). How/when do you apply this? How do you find the candidate distribution for Metropolis?
+
+\textbf{9. Gibbs sampling}: Used for estimating multiple unknown parameters in a model. How/when do you apply this? How do you find the conditional distributions? The section examining the model by \cite{Strauss:2007aa} will provide an example.
+
+\textbf{10. \emph{{Florida} or {Ohio}? {F}orecasting presidential state outcomes using reverse random walks}}: \cite{Strauss:2007aa} defines a model, building off of the work of \cite{Jackman:2005aa}, using polling data, priors from above, and Gibbs sampling, that is more involved than the model by \cite{Lock:2010aa}. Explain the idea of a ``random walk''.
+
+\textbf{Conclusion}
+
+\textbf{A. Conjugate Priors}
+
+\textbf{B. Probability distributions and normalizing constants}
+
+\textbf{References}
+
+\bibliography{thesis}
+
+\end{document}

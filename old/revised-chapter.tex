@@ -1,0 +1,251 @@
+\documentclass[12pt]{report}
+
+\usepackage{microtype}
+\usepackage{mm-bib}
+\usepackage{titling}
+\setlength{\droptitle}{-40pt}
+
+\usepackage{parskip}
+
+\usepackage[margin=1.5in]{geometry}
+
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd{\@makechapterhead}{\vspace*{50\p@}}{}{}{}
+\patchcmd{\@makeschapterhead}{\vspace*{50\p@}}{}{}{}
+\makeatother
+
+\usepackage{enumerate} %% replace this with some global setting?
+
+\usepackage{amsthm}
+\begingroup
+    \makeatletter
+    \@for\theoremstyle:=definition,remark,plain\do{%
+        \expandafter\g@addto@macro\csname th@\theoremstyle\endcsname{%
+            \addtolength\thm@preskip\parskip
+            }%
+        }
+\endgroup
+
+\newtheorem{definition}{Definition}[chapter]
+\usepackage{mathtools}
+\DeclareMathOperator{\G}{G}
+\DeclareMathOperator{\N}{N}
+\DeclareMathOperator{\Uniform}{Uniform}
+
+\newcommand\term[1]{\emph{#1}}
+
+\title{\textbf{A Chapter of the Thesis}}
+\author{Michael Maltese}
+\date{11 December 2013}
+
+\renewcommand\bibsection{\chapter*{Bibliography}}
+
+\begin{document}
+
+\maketitle
+
+\chapter*{Contents}
+
+\textbf{1. Introduction and motivation}: Nate Silver \citeyearpar{Silver:2012aa} popularized election forecasting in 2008 and 2012. Election forecasting is useful for media pundits trying to draw traffic and political campaign strategists trying to allocate resources \citep{Strauss:2007aa}, among other applications. I look at various papers to learn practical problems in and statistical methods for election and popular opinion forecasting.
+
+\textbf{2. Bayesian statisics}: Much of the math in this work is based on the idea of Bayesian inference, which provides a framework for taking multiple pieces of data into account (often characterized as mixing ``prior'' knowledge and sampling data to get a ``posterior'' distribution).
+
+\textbf{3. What affects public opinion? Predicting national elections from first-principles with linear regression}: \cite{Hibbs:2008aa} and others (not very interesting) use basic linear regression to analyze the factors that go into public opinion, and provide a model for predicting national presidential elections far in advance (we'll use this as a prior).
+
+\textbf{4. Hierarchical models: a quick detour}: Talk multi-level/hierarchical/mixed-effects models \citep{Gelman:2006aa,Gelman:2007aa}, for application in next section. Maybe talk about Expectation-Maximization (one way to solve a mixed-effects model).
+
+\textbf{5. Predicting states relative positions: turns out they don't change much anyways}: \cite{Lock:2010aa} find that state relative positions don't change much in between presidential elections, so they can use a state's previous position and its between-election variance as a prior. \cite{Campbell:1992aa} uses a linear regression (returned to in \citealp{Campbell:2006aa}), similar to the work done by \cite{Hibbs:2008aa}, to estimate factors in public opinion in  voting grouped at the state level.
+
+\textbf{6. Opinion polls to the rescue}: The models above ignore a valuable source of real-time data: opinion polls! Nate Silver \citeyearpar{Silver:2012aa} is the king of this. Some potential problems with polls (which we can handle) are: house bias, error due to the fact that people change their minds, and sampling problems. Maybe give a quick rundown of what some different models do to handle these problems.
+
+\textbf{7. \emph{Bayesian combination of state polls and election forecasts}}: Examination of the model by \cite{Lock:2010aa}, using polling data, bayesian inference, priors from above.
+
+\textbf{8. The Metropolis-Hastings algorithm}: Used for estimating distributions non-analytically. Also talk about Markov chains, which provide the theoretical framework about why this actually works. A simple example on Markov Chains (see Gabe's notes). How/when do you apply this? How do you find the candidate distribution for Metropolis?
+
+\textbf{9. Gibbs sampling}: Used for estimating multiple unknown parameters in a model. How/when do you apply this? How do you find the conditional distributions? The section examining the model by \cite{Strauss:2007aa} will provide an example.
+
+\textbf{10. \emph{{Florida} or {Ohio}? {F}orecasting presidential state outcomes using reverse random walks}}: \cite{Strauss:2007aa} defines a model, building off of the work of \cite{Jackman:2005aa}, using polling data, priors from above, and Gibbs sampling, that is more involved than the model by \cite{Lock:2010aa}. Explain the idea of a ``random walk''.
+
+\textbf{11. Conclusion}
+
+\textbf{A. Conjugate distributions}
+
+\textbf{B. Probability distributions and normalizing constants}
+
+\textbf{Bibliography}
+
+\setcounter{chapter}{0}
+\chapter{Introduction}
+
+Nate Silver and other statistically-minded political forecasters garnered much acclaim in the 2012 presidential election cycle for their unashamedly mathematical approach to political punditry and for the resulting accuracy of their models. Silver went on to become something of a pop science celebrity, popularizing his idea of looking at the world through a Bayesian lens \citep{Silver:2012aa}.
+
+In this work we examine different political election forecasting models and the different statistical and mathematical tools behind them.
+
+This topic is relevant both to the news media, who stand to make money off of being able to day-after-day produce accurate and/or exciting predictions, and to political campaigns and organizations, who use the information to inform decision-making. For example, models which specifically focus on figuring out battleground states are a useful tool for deciding where to allocate vital campaign money \citep{Strauss:2007aa}.
+
+All models looked at in this work follow a similar strategy of incorporating opinion poll data at various dates before the election, and attempting to track the future possibilities and minimize the variance of their forecasting. In American presidential races, polling data is provided on both a national and state level, and by many different organizations (Gallup, Rasmussen, PPP, etc). Polling data is inherently both inaccurate (a single sample probably will not represent the entire country, and people's opinions can change over a few months) and biased (organizations have political bents).
+
+Some models deal with the biased nature of polling data by simply averaging all available polls under the assumption that biases cancel out \citep{Wang:2012aa} and others specifically analyze each organization and assign a measure of bias \citep{Silver:2012aa}. \citet{Strauss:2007aa} attempts to estimate biases directly from the data during a live campaign, requiring the use of a more computationally intensive model and Markov-Chain Monte Carlo methods.
+
+Polls also suffer from the ``early bird'' problem: people might report their preferences early in the campaign, and then later change their minds. Models typically handle this by using an estimate of how much information polls carry at different dates in a campaign, and initialize their model using a prior forecast from first principles.
+
+\citet{Lock:2010aa}, for example, use historical data on the relevance of polls at different dates in the campaign season (obtained with the help of mixed-effects linear regression, a technique which compensates for small factor samples inside a larger overall sample, described further by \citealt{Gelman:2006aa}) and combines it with a prior forecast based on economic and military events \citep{Hibbs:2008aa}.
+
+\citet{Strauss:2007aa} and \citet{Jackman:2005aa}, on the other hand, develop more complicated models estimating poll variance from theoretical principles as a random walk.
+
+Bayesian statistics, a variant of classical frequentist statistics, provides the theoretical underpinning for many of these models and tools. They allow a model to specify a prior belief, such as macro-level factors in a presidential election (like economic and military events, as interpreted by \citealt{Hibbs:2008aa}), and then update that beliefs based on new data, such as opinion polls. The specific technique of Bayesian inference is a way to mathematically solve the problem of weighting between different data based on how much information we think they contain.
+
+The statistical tools and ideas used here have further applications in the political world. \citet{Lock:2010aa} note that ``an approach such as described here could be applied to study changes in public opinion and other phenomena with wide national swings and fairly stable spatial distributions relative to the national average,'' such as the application of these ideas by \citet{Lax:2009aa} to opinions and state policies on gay rights.
+
+Other models incorporate more arcane techniques to, for example, examine voting turnout among demographic groups \citep{Ghitza:2013aa}, an important piece of information for political campaigns.
+
+\setcounter{chapter}{7}
+\chapter{The Metropolis-Hastings algorithm}
+
+The Metropolis-Hastings algorithm is a technique in the family of Markov-Chain Monte Carlo (MCMC) methods that allows numerically approximating a probability distribution, often used when the distribution is difficult to sample from directly.
+
+The algorithm generates sequences of samples in such a way that their distribution converges to the actual distribution being analyzed. Each sample is dependent only on the sample before it, making the sequence a Markov chain.
+
+\begin{definition} We call a sequence of random variables $\{X_t\}$ a Markov chain if the distribution of each variable is dependent only on the variable before it, i.e. \( \Pr(X_{t+1}) | X_t,\ldots,X_0) = \Pr(X_{t+1}|X_t) \). This is known as the Markovian property. \end{definition}
+
+A particular useful property of these sequences is that, under a few additional conditions, the Markov chain ``forgets'' that value it was initialized at. As we go farther down the chain, the probability of any element of the sequence taking on a certain value converges to the same probability regardless of where the chain started. This is what allows the Metropolis-Hastings samples to converge in probability to the actual distribution being looked it.
+
+\begin{definition}
+We say that a Markov chain is ergodic if there exists a unique stationary distribution $\pi$ such that for all possible starting values $j$ of the chain, $\lim_{t\to \infty} \Pr(X_t = i | X_0 = j) = \pi_i$. A Markov chain is ergodic if it is recurrent, aperiodic, and irreducible.
+\end{definition} 
+
+\begin{definition}  
+  A Markov chain is recurrent if, when started at some value, it will return to that value in the future with probability 1.
+  %% TODO. probability converges to 1 .. ?
+\end{definition}
+
+\begin{definition}
+  A Markov chain is irreducible if, for any two possible values, when started at one it is possible the chain will eventually take on the other. In other words, for any two possible values $i$ and $j$, there exists $m > 0$ such that \( \Pr(X_m = i | X_0 = j) > 0 \).
+\end{definition}
+
+\begin{definition}
+  A Markov chain is periodic if it only takes on certain values with some period. In other words, for any two possible values $i$ and $j$, a timestep $m$, and a period $d$, \( \Pr(X_m = i | X_0 = j) = 0 \) unless $m$ is divisible by $d$. If $d = 1$, then we say the chain is aperiodic.
+\end{definition}
+
+%% TODO example about combinations of numbers from Gabe's notes?
+
+We need one more trick that will allow us to understand the Metropolis-Hastings algorithm. Given an ergodic Markov chain with stationary distribution $\pi$, note that for all possible values $j$, $\pi_j = \sum_i \pi_i \Pr(i\to j)$. If this were not true, $\pi$ would not be the stationary distribution.
+
+We also see that for all $j$, $\pi_j \ge 0$, and $\sum_i\Pr(j \to i) = 1$, otherwise $\pi$ would not be a distribution.
+
+If there exists a set of probabilities $\pi$ for a Markov chain such that $\pi_i\Pr(i\to j) = \pi_j \Pr(j\to i)$, then by the above $\pi$ is the stationary distribution of the chain, and we call such a chain reversible. To see this, note that \( \sum_i \pi_i\Pr(i\to j) = \sum_i \pi_j\Pr(j\to i) = \pi_j \sum_i\Pr(j \to i) = \pi_j \).
+
+The Metropolis-Hastings algorithm works as follows, given a stationary distribution with PDF $f$ (the distribution to sample from) and a proposal distribution $g$:
+
+\begin{enumerate}[(1)]
+  \item Given $X_t = x$ at time $t$
+  \item Sample $y$ from the proposal distribution with $g(y|X_t = x)$
+  \item Calculate the Metropolis-Hastings ratio: \[
+    R(x, y) = \min\left( \dfrac{f(y)g(x|y)}{f(x)g(y|x)}, 1 \right)
+  \]
+  and with probability $R(x, y)$, let $X_{t+1} = y$. Otherwise let $X_{t+1} = X_t$.
+\end{enumerate}
+
+This algorithm produces a sequence of samples whose distribution converges to $f$.
+
+Let $x_1$ and $x_2$ be two possible values of the proposal distribution. Suppose $f(x_1)g(x_2|x_1) < f(x_2)g(x_1|x_2)$. Then the transition from $x_1$ to $x_2$ has joint distribution the change of starting with $x_1$ and being offered $x_2$, multiplied by the M-H ratio: or, in other words $f(x_1)g(x_2|x_1)$. The transition the other way has a joint distribution of \[ f(x_2)g(x_2|x_1)\dfrac{f(x_1)g(x_2|x_1)}{f(x_2)g(x_1|x_2)} = f(x_1)g(x_2|x_1)\]
+and thus by the statements on Markov chains above this chain is reversible and $f$ is its stationary distribution.
+
+%% TODO: Wow that's weird to understand. Specifically the bit about reversibility and how to prove that.
+
+%% TODO: Need more about how to pick a proposal distribution.
+
+\setcounter{chapter}{9}
+\chapter{Forecasting with random walks}
+
+A random walk models values $\alpha_t$ that undergo a random ``shock'' at each time step. We assume that the variance of the shocks, $\omega^2$, is not dependent on the current time step or on the current value, and we say that \( \alpha_t \sim \N(\alpha_{t-1}, \omega^2) \).
+
+Assuming that data sampled from this model are normally drawn from the true value at that time, we say the data points $y_i$ are distributed $ N(\alpha_{t_i}, s^2_i)$, where $s^2_i$ is the known variance for each data point.
+
+\citet{Strauss:2007aa} models the national preference for a Republican president as a reverse random walk, taking $\alpha_0$ as the election result. He builds off a model initially proposed by \citet{Jackman:2005aa}, who uses a forward random walk to predict Australian parliamentary elections. The difference in nomenclature derives from where each assigns priors: \citet{Jackman:2005aa} assigns a prior at the earliest time step of his model, whereas \citet{Strauss:2007aa} assigns a prior on the final value of his model.
+
+%% \emph{(TODO. \cite{Strauss:2007aa} makes the claim that variance increases linearly in random walks. Makes sense, but find/figure out the math.)}
+
+He incorporates polls as \(y_i \sim \N(\alpha_t + \delta_j, s_i^2)\) where $\delta_j$ is the ``house'' bias for the organization conducting the poll, $s_i^2$ is poll variance $\frac{y_i(1-y_i)}{q_i}$, and $q_i$ is the number of respondents included in the poll. He assumes that house biases cancel out, i.e. $\sum \delta_j = 0$.
+
+He uses the Campbell (\citeyear{Campbell:1992aa,Campbell:2006aa}) prior on the national outcome, predicted off of a number of indicators. This gives \(\alpha_0 \sim \N(0.522, (0.0253)^2)\) for the 2008 election (calculated before polling information is available).
+
+\citet{Strauss:2007aa} estimates priors on the shock and poll bias of \(
+\omega \sim \Uniform(0, (0.01)^2)\) and \(
+\delta_j \sim \N(0, (0.1)^2\), which he justifies by noting that
+\begin{quote}
+The day-to-day shocks of the campaign are assumed to fall within plus or minus 2 percentage points 95\% of the time (at a maximum). While specific events (e.g., conventions, debates) might cross this threshold, those are the exceptions, not the norms. [Footnote: Even conventions, which last four days, might not produce effects larger than two percentage points per day.] The prior on house effects assumes that 95\% of bias is less than 20\% (in either direction): all reputable polling organizations should easily pass that standard.
+\end{quote}
+
+The conditional distributions for the Gibbs sampler are:
+\begin{enumerate}[(a)]
+  \item $\alpha_t$: The conditional probabilities for each time step $\alpha_t$ are completely determined by the values on either side, $\alpha_{t-1}$ and $\alpha_{t+1}$ (except for the first and last, which are determined by only the next or previous time step, respectively), and any data points at that time step.
+
+Then the value at each time step $\alpha_t$ is the conjugate posterior for the mean of normal variables with known variance (\hyperref[sec:conj:gaussianwithprecision]{Appendix}), combining the time steps on either side, any sample points, and a prior if we have assigned one to that time step.
+
+Thus each $\alpha_t$ is a mix of the any time periods adjoining, $\N(\alpha_{t+1}, \omega^2)$ and $\N(\alpha_{t-1}, \omega^2)$ and of any polls for that time period, debiased, $\N(y_i - \delta_j, s_i^2)$.
+    
+  \item $\tau$, where $\tau = \omega^{-2}$: The shock variance $\omega^2$ is given by the conjugate posterior for the variance of normal variables with known mean (\hyperref[sec:conj:gaussianwithmean]{Appendix}), where the values we are looking at are $(\alpha_t - \alpha_{t-1})^2$.
+
+  In this case we have the variance between neighboring time periods, $\frac{\sum(\alpha_{t+1} - \alpha_t)^2}{T-2}$, and the prior means we resample until we get $\omega^2 < (0.01)^2$.
+  
+  \item $\delta_j$: The house biases are a combination of the prior $\N(0, (0.1)^2)$ and the differences of all polls by that organization from true preferences, $\N(y_i - \alpha_t, s_i^2)$.
+\end{enumerate}
+We write these out as:
+\begin{align*}
+% alpha_0
+\alpha_0 &\sim \N\left(\frac{  \frac{\alpha_{1}}{\omega^2} + \frac{0.522}{(0.0253)^2}}{ \frac{2}{\omega^2} + \frac{1}{(0.0253)^2} }, \text{~} \frac{1}{\frac{2}{\omega^2} + \frac{1}{(0.0253)^2}}\right) \\
+% alpha
+\forall t \ne 0,\text{ } \alpha_t &\sim \N\left(\frac{  \frac{\alpha_{t+1} + \alpha_{t-1}}{\omega^2} + \sum\frac{y_i - \delta_j}{s_i^2}}{ \frac{2}{\omega^2} + \sum\frac{1}{s_i^2} }, \text{~} \frac{1}{\frac{2}{\omega^2} + \sum\frac{1}{s_i^2}}\right) \\
+% tau
+\tau &\sim \Gamma\left(
+\frac{T-2}{2}
+, \text{~}
+\frac{\sum(\alpha_{t+1} - \alpha_{t})^2}{2}
+%more height
+\vphantom{\frac{  \frac{\alpha_{t+1} + \alpha_{t-1}}{\omega^2} + \sum\frac{y_i - \delta_j}{s_i^2}}{ \frac{2}{\omega^2} + \sum\frac{1}{s_i^2} }, \text{~} \frac{1}{\frac{2}{\omega^2} + \sum\frac{1}{s_i^2}}}
+%
+\right) \mathcal{I}(\tau > 10,000) \\
+% delta
+\delta_j &\sim \N\left(\frac{ \sum\frac{y_i - \alpha_t}{s_i^2}}{\frac{1}{(0.1)^2} + \sum \frac{1}{s_i^2}}, \text{~} \frac{1}{ \frac{1}{(0.1)^2} + \sum \frac{1}{s_i^2}}
+%more height
+\vphantom{\frac{  \frac{\alpha_{t+1} + \alpha_{t-1}}{\omega^2} + \sum\frac{y_i - \delta_j}{s_i^2}}{ \frac{2}{\omega^2} + \sum\frac{1}{s_i^2} }, \text{~} \frac{1}{\frac{2}{\omega^2} + \sum\frac{1}{s_i^2}}}
+%
+\right)
+\end{align*}
+
+\appendix
+
+\chapter{Conjugate distributions}
+
+\subsection*{Gaussian (unknown mean, known precision)}
+\label{sec:conj:gaussianwithprecision}
+
+Given a prior on the mean $\mu \sim \N(\mu_0, \tau_0)$, and a distribution for the data $x \sim \N(\mu, \tau)$, we see that: \begin{align*}
+\Pr(\mu | x, \tau) &\propto \Pr(x | \mu, \tau)\Pr(\mu) \\
+&\propto \exp\left( -\frac{\tau(x-\mu)^2}{2} \right)\exp\left( -\frac{\tau_0(\mu - \mu_0)^2}{2} \right) \\
+&= \exp\left[ -\frac12\left( \tau x^2 - 2x\mu\tau + \tau\mu^2 + \tau_0\mu^2 - 2\mu\mu_0\tau_0 + \tau_0\mu_0^2 \right) \right]
+\intertext{All terms not involving $\mu$ can be dropped, because they'll work out in the proportionality constant. This gives us:}
+&\propto \exp\left[  -\frac12(\mu(\tau + \tau_0) -2\mu(x\tau + \mu_0\tau_0)  \right] \\
+&= \exp\left[  -\frac12(\tau_0 + \tau)\left(  \mu - \frac{x\tau + \mu_0\tau_0}{\tau_0 + \tau}  \right)^2\right]
+\end{align*}
+So the posterior distribution is: \[
+\mu | x, \tau \sim \N\left(  \frac{x\tau + \mu_0\tau_0}{\tau_0 + \tau}, \text{ }\tau_0 + \tau  \right)
+\]
+
+\subsection*{Gaussian (known mean, unknown precision)}
+\label{sec:conj:gaussianwithmean}
+
+Given a prior on the precision $\tau \sim \Gamma(\alpha, \beta)$, and a distribution for $n$ data points $x_i \sim \N(\mu, \tau)$, we see that: \begin{align*}
+\Pr(\tau | x, \mu) &\propto \Pr(x | \tau, \mu)\Pr(\tau) \\
+&\propto \prod\left(\tau^{\frac{1}{2}}\exp\left(  -\frac{\tau(x_i - \mu)^2}{2}  \right)\right) \tau^{\alpha-1}\exp(-\beta\tau) \\
+&= \tau^{\alpha + \frac{n}{2} - 1}\exp\left(  -\tau(\beta + \frac{(x_i + \mu)^2)}{2}  \right)
+\end{align*}
+So the posterior distribution is \[
+\tau | x, \mu \sim \Gamma\left(  \alpha + \frac{n}{2}, \text{ } \beta + \frac{(x_i + \mu)^2}{2}  \right)
+\]
+
+\nocite{*}
+\bibliography{thesis}
+\end{document}

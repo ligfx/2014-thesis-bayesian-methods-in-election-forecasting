@@ -1,0 +1,109 @@
+\documentclass[12pt]{report}
+
+\usepackage{mathtools}
+\usepackage{microtype}
+\usepackage{mm-bib}
+\pagestyle{headings}
+
+\DeclareMathOperator{\N}{\mathcal{N}}
+
+\usepackage{parskip}
+
+\usepackage{titling}
+\setlength{\droptitle}{-90pt}
+
+\renewcommand\bibsection{\addcontentsline{toc}{chapter}{References}\chapter*{References}}
+
+% \usepackage[margin=1.5in]{geometry}
+
+\begin{document}
+
+\title{\textbf{Bayesian methods in election forecasting}}
+\author{Michael Maltese}
+\date{15 November 2013}
+\maketitle
+
+\tableofcontents
+
+\addcontentsline{toc}{chapter}{Introduction}
+\chapter*{Introduction}
+
+\chapter{Motivation}
+
+Nate Silver \citeyearpar{Silver:2012aa} popularized election forecasting in 2008 and 2012. Election forecasting is useful for media pundits trying to draw traffic and political campaign strategists trying to allocate resources \citep{Strauss:2007aa}, among other applications. I look at various papers to learn practical problems in and statistical methods for election and popular opinion forecasting.
+
+\chapter{Bayesian statisics}
+
+Much of the math in this work is based on the idea of Bayesian inference, which provides a framework for taking multiple pieces of data into account (often characterized as mixing ``prior'' knowledge and sampling data to get a ``posterior'' distribution).
+
+\chapter{What affects public opinion? Predicting national elections from first-principles with linear regression}
+
+\cite{Hibbs:2008aa} and others (not very interesting) use basic linear regression to analyze the factors that go into public opinion, and provide a model for predicting national presidential elections far in advance (we'll use this as a prior).
+
+\chapter{Hierarchical models: a quick detour}
+
+Talk multi-level/hierarchical/mixed-effects models \citep{Gelman:2006aa,Gelman:2007aa}, for application in next section. Maybe talk about Expectation-Maximization (one way to solve a mixed-effects model).
+
+\chapter{Predicting states relative positions: turns out they don't change much anyways}
+
+\cite{Lock:2010aa} find that state relative positions don't change much in between presidential elections, so they can use a state's previous position and its between-election variance as a prior. \cite{Campbell:1992aa} uses a linear regression (returned to in \citealp{Campbell:2006aa}), similar to the work done by \cite{Hibbs:2008aa}, to estimate factors in public opinion in  voting grouped at the state level.
+
+\chapter{Opinion polls to the rescue}
+
+The models above ignore a valuable source of real-time data: opinion polls! Nate Silver \citeyearpar{Silver:2012aa} is the king of this. Some potential problems with polls (which we can handle) are: house bias, error due to the fact that people change their minds, and sampling problems. Maybe give a quick rundown of what some different models do to handle these problems.
+
+\chapter{\emph{Bayesian combination of state polls and election forecasts}}
+
+Examination of the model by \cite{Lock:2010aa}, using polling data, bayesian inference, priors from above.
+
+\chapter{The Metropolis-Hastings algorithm}
+
+Used for estimating distributions non-analytically. Also talk about Markov chains, which provide the theoretically framework about why this actually works. A simple example on Markov Chains (see Gabe's notes). How/when do you apply this? How do you find the candidate distribution for Metropolis?
+
+\chapter{Gibbs sampling}
+
+Used for estimating multiple unknown parameters in a model. How/when do you apply this? How do you find the conditional distributions? The section examining the model by \cite{Strauss:2007aa} will provide an example.
+
+\chapter{\emph{{Florida} or {Ohio}? {F}orecasting presidential state outcomes using reverse random walks}}
+
+\cite{Strauss:2007aa} defines a model, building off of the work of \cite{Jackman:2005aa}, using polling data, priors from above, and Gibbs sampling, that is more involved than the model by \cite{Lock:2010aa}. Explain the idea of a ``random walk''.
+
+\addcontentsline{toc}{chapter}{Conclusion}
+\chapter*{Conclusion}
+
+\appendix
+
+\chapter{Conjugate distributions}
+
+\section{Gaussian (unknown mean, known precision)}
+\label{sec:conj:gaussianwithprecision}
+
+Given a prior on the mean $\mu \sim \N(\mu_0, \tau_0)$, and a distribution for the data $x \sim \N(\mu, \tau)$, we see that: \begin{align*}
+\Pr(\mu | x, \tau) &\propto \Pr(x | \mu, \tau)\Pr(\mu) \\
+&\propto \exp\left( -\frac{\tau(x-\mu)^2}{2} \right)\exp\left( -\frac{\tau_0(\mu - \mu_0)^2}{2} \right) \\
+&= \exp\left[ -\frac12\left( \tau x^2 - 2x\mu\tau + \tau\mu^2 + \tau_0\mu^2 - 2\mu\mu_0\tau_0 + \tau_0\mu_0^2 \right) \right]
+\intertext{All terms not involving $\mu$ can be dropped, because they'll work out in the proportionality constant. This gives us:}
+&\propto \exp\left[  -\frac12(\mu(\tau + \tau_0) -2\mu(x\tau + \mu_0\tau_0)  \right] \\
+&= \exp\left[  -\frac12(\tau_0 + \tau)\left(  \mu - \frac{x\tau + \mu_0\tau_0}{\tau_0 + \tau}  \right)^2\right]
+\end{align*}
+So the posterior distribution is: \[
+\mu | x, \tau \sim \N\left(  \frac{x\tau + \mu_0\tau_0}{\tau_0 + \tau}, \text{ }\tau_0 + \tau  \right)
+\]
+
+\section{Gaussian (known mean, unknown precision)}
+\label{sec:conj:gaussianwithmean}
+
+Given a prior on the precision $\tau \sim \Gamma(\alpha, \beta)$, and a distribution for $n$ data points $x_i \sim \N(\mu, \tau)$, we see that: \begin{align*}
+\Pr(\tau | x, \mu) &\propto \Pr(x | \tau, \mu)\Pr(\tau) \\
+&\propto \prod\left[\tau^{\frac{1}{2}}\exp\left(  -\frac{\tau(x_i - \mu)^2}{2}  \right)\right] \tau^{\alpha-1}\exp(-\beta\tau) \\
+&= \tau^{\alpha + \frac{n}{2} - 1}\exp\left[  -\tau\left(\beta + \frac{(x_i + \mu)^2}{2}\right)  \right]
+\end{align*}
+So the posterior distribution is \[
+\tau | x, \mu \sim \Gamma\left(  \alpha + \frac{n}{2}, \text{ } \beta + \frac{(x_i + \mu)^2}{2}  \right)
+\]
+
+\chapter{Probability distributions and normalizing constants}
+
+\bibliography{thesis}
+
+\end{document}

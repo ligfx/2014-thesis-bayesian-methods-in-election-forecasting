@@ -1,0 +1,130 @@
+\documentclass[12pt]{article}
+
+\usepackage{mm-bib}
+
+\usepackage{tgheros}
+
+\usepackage{enumerate}
+
+\usepackage{amsmath}
+
+\DeclareMathOperator{\G}{G}
+\DeclareMathOperator{\N}{N}
+\DeclareMathOperator{\Uniform}{Uniform}
+
+\usepackage[compact]{titlesec}
+\titleformat*{\section}{\large\bfseries\sffamily}
+\titleformat*{\subsection}{\bfseries\sffamily}
+\titlespacing*{\section}{0em}{1em}{1em}
+\titlespacing*{\subsection}{0em}{1em}{1em}
+
+\begin{document}
+\begin{flushleft}{\normalfont\sffamily\LARGE\bfseries Thesis Draft Section: \\ Random walks and a national forecast model\par} \large{Michael Maltese \\ 1 November 2013}\\[2em]\end{flushleft}
+
+\section*{Technique: Random walks}
+
+A random walk models values $\alpha_t$ that undergo a random ``shock'' at each time step. We assume that the variance of the shocks, $\omega^2$, is not dependent on the current time step or on the current value, and we define the model as \[ \alpha_t \sim \N(\alpha_{t-1}, \omega^2) \]
+
+% \emph{(TODO. \cite{strausswalks} makes the claim that variance increases linearly in random walks. Makes sense, but find/figure out the math.)}
+
+We'd like to fit this model to real data. Assuming our data points for each a time step are normally drawn from the true value at that time (and that we know the variance of the error), we model the data points, $y_i$ as \[y_i \sim N(\alpha_{t_i}, s^2_i)\]
+
+\addcontentsline{toc}{subsection}{Conditional probabilities for Gibbs sampling}
+\subsection*{Conditional probabilities and Gibbs sampling}
+
+The conditional probabilities for each time step $\alpha_t$ are completely determined by the values on either side, $\alpha_{t-1}$ and $\alpha_{t+1}$ (except for the first and last, which clearly are determined by only the next or previous time step, respectively), and any data points at that time step.
+
+Then the value at each time step $\alpha_t$ is the conjugate posterior for the mean of normal variables with known variance (\hyperref[sec:conj:gaussianwithprecision]{Appendix}), combining the time steps on either side, any data points (as above), and a prior if we have assigned one.
+
+The shock variance $\omega^2$ is given by the conjugate posterior for the variance of normal variables with known mean (\hyperref[sec:conj:gaussianwithmean]{Appendix}), where the values we are looking at are $(\alpha_t - \alpha_{t-1})^2$.
+
+\subsection*{Reverse random walks}
+
+A note on nomenclature: \cite{strausswalks} deems his model a \emph{reverse} random walk, where \cite{jackman} uses a forward random walk. This comes from the fact that \cite{jackman} assigns a prior to the first time step of his model, whereas \cite{strausswalks} assigns a prior on the final value of his model. Accordingly, they number time steps starting from different ends. This does not matter for the Gibbs sampler.
+
+\section*{Application: National presidential forecast}
+
+\addcontentsline{toc}{subsection}{Model}
+\cite{strausswalks} models the national preference for a Republican president as a reverse random walk, \[\alpha_t \sim \N(\alpha_{t-1}, \omega^2)\]where $\alpha_0$ is the election result and $\omega^2$ as the variance of the shocks. He incorporates polls as \[y_i \sim \N(\alpha_t + \delta_j, s_i^2)\] where $\delta_j$ is the ``house'' bias for the organization conducting the poll, $s_i^2$ is poll variance $\frac{y_i(1-y_i)}{q_i}$, and $q_i$ is the number of respondents included in the poll. He assumes that house biases cancel out, i.e. $\sum \delta_j = 0$.
+
+\addcontentsline{toc}{subsection}{Priors}
+\subsection*{Priors}
+He uses priors of
+\begin{align*}
+\alpha_0 &\sim \N(0.522, (0.0253)^2)
+\intertext{for the 2008 election (calculated before polling information) and}
+\omega &\sim \Uniform(0, (0.01)^2) \\
+\delta_j &\sim \N(0, (0.1)^2)
+\end{align*}
+which he justifies by noting that
+\begin{quote}
+The day-to-day shocks of the campaign are assumed to fall within plus or minus 2 percentage points 95\% of the time (at a maximum). While specific events (e.g., conventions, debates) might cross this threshold, those are the exceptions, not the norms. [Footnote: Even conventions, which last four days, might not produce effects larger than two percentage points per day.] The prior on house effects assumes that 95\% of bias is less than 20\% (in either direction): all reputable polling organizations should easily pass that standard.
+\end{quote}
+
+\addcontentsline{toc}{subsection}{Gibbs sampling}
+\subsection*{Gibbs sampling}
+Then, the conditional distributions for the Gibbs sampler are:
+\begin{enumerate}[(a)]
+	\item $\alpha_t$: the preferences at each time period, as a mix of the two time periods adjoining, $\N(\alpha_{t+1}, \omega^2)$ and $\N(\alpha_{t-1}, \omega^2)$ (except for the time periods on either end, which have only one adjoining period), and of any polls for that time period, debiased, $\N(y_i - \delta_j, s_i^2)$.
+
+	\item $\alpha_0$ as a special case: a mix between the next time period $\alpha_1$, and the prior, as above.
+		
+	\item $\tau$, where $\tau = \omega^{-2}$: the posterior for precision of a normal-gamma model with unknown mean and variance, where we are estimating the variance between neighboring time periods, $\frac{\sum(\alpha_{t+1} - \alpha_t)^2}{T-2}$, and the prior doesn't really make sense here so we just resample until we get $\omega^2 < (0.01)^2$.
+	
+	\item $\delta_j$: the house biases, as a combination of the prior $\N(0, (0.1)^2)$ and the differences of all polls by that organization from true preferences, $\N(y_i - \alpha_t, s_i^2)$.
+\end{enumerate}
+We write these out as:
+\begin{align*}
+% alpha_0
+\alpha_0 &\sim \N\left(\frac{  \frac{\alpha_{1}}{\omega^2} + \frac{0.522}{(0.0253)^2}}{ \frac{2}{\omega^2} + \frac{1}{(0.0253)^2} }, \text{~} \frac{1}{\frac{2}{\omega^2} + \frac{1}{(0.0253)^2}}\right) \\
+% alpha
+\forall t \ne 0,\text{ } \alpha_t &\sim \N\left(\frac{  \frac{\alpha_{t+1} + \alpha_{t-1}}{\omega^2} + \sum\frac{y_i - \delta_j}{s_i^2}}{ \frac{2}{\omega^2} + \sum\frac{1}{s_i^2} }, \text{~} \frac{1}{\frac{2}{\omega^2} + \sum\frac{1}{s_i^2}}\right) \\
+% tau
+\tau &\sim \Gamma\left(
+\frac{T-2}{2}
+, \text{~}
+\frac{\sum(\alpha_{t+1} - \alpha_{t})^2}{2}
+%more height
+\vphantom{\frac{  \frac{\alpha_{t+1} + \alpha_{t-1}}{\omega^2} + \sum\frac{y_i - \delta_j}{s_i^2}}{ \frac{2}{\omega^2} + \sum\frac{1}{s_i^2} }, \text{~} \frac{1}{\frac{2}{\omega^2} + \sum\frac{1}{s_i^2}}}
+%
+\right) \mathcal{I}(\tau > 10,000) \\
+% delta
+\delta_j &\sim \N\left(\frac{ \sum\frac{y_i - \alpha_t}{s_i^2}}{\frac{1}{(0.1)^2} + \sum \frac{1}{s_i^2}}, \text{~} \frac{1}{ \frac{1}{(0.1)^2} + \sum \frac{1}{s_i^2}}
+%more height
+\vphantom{\frac{  \frac{\alpha_{t+1} + \alpha_{t-1}}{\omega^2} + \sum\frac{y_i - \delta_j}{s_i^2}}{ \frac{2}{\omega^2} + \sum\frac{1}{s_i^2} }, \text{~} \frac{1}{\frac{2}{\omega^2} + \sum\frac{1}{s_i^2}}}
+%
+\right)
+\end{align*}
+
+\section*{Appendix: Conjugate distributions}
+
+\subsection*{Gaussian (unknown mean, known precision)}
+\label{sec:conj:gaussianwithprecision}
+
+Given a prior on the mean $\mu \sim \N(\mu_0, \tau_0)$, and a distribution for the data $x \sim \N(\mu, \tau)$, we see that: \begin{align*}
+\Pr(\mu | x, \tau) &\propto \Pr(x | \mu, \tau)\Pr(\mu) \\
+&\propto \exp\left( -\frac{\tau(x-\mu)^2}{2} \right)\exp\left( -\frac{\tau_0(\mu - \mu_0)^2}{2} \right) \\
+&= \exp\left[ -\frac12\left( \tau x^2 - 2x\mu\tau + \tau\mu^2 + \tau_0\mu^2 - 2\mu\mu_0\tau_0 + \tau_0\mu_0^2 \right) \right]
+\intertext{All terms not involving $\mu$ can be dropped, because they'll work out in the proportionality constant. This gives us:}
+&\propto \exp\left[  -\frac12(\mu(\tau + \tau_0) -2\mu(x\tau + \mu_0\tau_0)  \right] \\
+&= \exp\left[  -\frac12(\tau_0 + \tau)\left(  \mu - \frac{x\tau + \mu_0\tau_0}{\tau_0 + \tau}  \right)^2\right]
+\end{align*}
+So the posterior distribution is: \[
+\mu | x, \tau \sim \N\left(  \frac{x\tau + \mu_0\tau_0}{\tau_0 + \tau}, \text{ }\tau_0 + \tau  \right)
+\]
+
+\subsection*{Gaussian (known mean, unknown precision)}
+\label{sec:conj:gaussianwithmean}
+
+Given a prior on the precision $\tau \sim \Gamma(\alpha, \beta)$, and a distribution for $n$ data points $x_i \sim \N(\mu, \tau)$, we see that: \begin{align*}
+\Pr(\tau | x, \mu) &\propto \Pr(x | \tau, \mu)\Pr(\tau) \\
+&\propto \prod\left(\tau^{\frac{1}{2}}\exp\left(  -\frac{\tau(x_i - \mu)^2}{2}  \right)\right) \tau^{\alpha-1}\exp(-\beta\tau) \\
+&= \tau^{\alpha + \frac{n}{2} - 1}\exp\left(  -\tau(\beta + \frac{(x_i + \mu)^2)}{2}  \right)
+\end{align*}
+So the posterior distribution is \[
+\tau | x, \mu \sim \Gamma\left(  \alpha + \frac{n}{2}, \text{ } \beta + \frac{(x_i + \mu)^2}{2}  \right)
+\]
+
+\bibliography{thesis}
+
+\end{document}
