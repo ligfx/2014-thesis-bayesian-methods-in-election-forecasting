@@ -1,1 +1,13 @@
 citations/
+*.bbl
+*.toc
+*.synctex.gz
+*.log
+*.pdf
+*-concordance.tex
+*-tikzDictionary
+strausswalk.data
+*.fls
+*.fdb_latexmk
+cache/
+figure/

@@ -1,6 +1,6 @@
-\documentclass[thesis.tex]{subfiles}
-\begin{document}
-
+<<echo=FALSE, cache=FALSE>>=
+set_parent('thesis.Rnw')
+@
 
 \section{The Metropolis-Hastings algorithm}
 
@@ -43,9 +43,9 @@ The \term{Metropolis-Hastings} algorithm extends the above to work in the case w
 
 \bigskip
 
-\noindent\textbf{Example:} Consider the scaled inverse-\(\chi^2\) distribution, \[
+\noindent\textbf{Example:} Consider the distribution, \[
   p(\theta) = C \cdot \theta^{-n/2} \cdot \exp \left(-\frac{a}{2\theta}\right),
-\] with degrees of freedom \(n = 5\), and scaling factor \(a = 4\).
+\] with \(n = 5\) and \(a = 4\).
 
 Take a Metropolis candidate distribution, the uniform distribution from 0 to 100. We know \(p\) has tails outside this range, but assume that they're negligible.
 
@@ -53,13 +53,73 @@ Now, run the Metropolis algorithm: Let \(\theta^{(0)} = 1\), and suppose \(\thet
   \alpha = \min\left[ \frac{p(\theta^*)}{p(\theta^{(t-1)})} ,\, 1\right] = \min\left[ \frac{(\theta^*)^{-5/2} \exp\left( -\frac{2}{\theta^*} \right)}{(\theta^{(t-1)})^{-5/2} \exp\left( -\frac{2}{\theta^{(t-1)}} \right)},\, 1 \right] = 0.0007,
 \] so we accept \(\theta^*\) with probability 0.0007.
 
+The first 500 steps of this algorithm are shown in the left side of Figure \ref{fig:mixing}. Note the long flat periods, where all candidate values are rejected. This chain is called \textbf{poorly-mixing}.
+
+Suppose that we instead use \(\chi^2_1\) as the candidate distribution. This distribution is no longer symmetric, so we must use Metropolis-Hastings instead of just Metropolis. A resulting sample run is shown in the right side of  Figure \ref{fig:mixing}. The series of samples looks like \textbf{white noise}, and we call this chain \textbf{well-mixing}.
+
+<<mixing, dev='tikz', fig.cap='Poorly-mixing and well-mixing Metropolis chains', out.width='.49\\linewidth', echo=FALSE, cache=TRUE, fig.show='hold'>>=
+# Poorly-mixing
+set.seed(47)
+
+p <- function(theta) theta^(-2.5) * exp(-2 / theta)
+
+next_theta <- function(theta0) {
+  theta <- runif(1, min=0, max=100)
+  print
+  alpha <- min(p(theta) / p(theta0), 1)
+  x <- runif(1)
+  if (x <= alpha) {
+    return(theta)
+  } else {
+    return(theta0)
+  }
+}
+
+thetas <- rep(NA, 500)
+thetas[1] <- 1
+for (i in 2:500) {
+  thetas[i] <- next_theta(thetas[i-1])
+}
+
+plot(thetas, type='l', lwd=2, bty='n', xlab='n', ylab='Theta', cex.lab=1.5, cex.axis=1.5)
+
+# Well-mixing
+set.seed(238)
+library(functional)
+
+p <- function(theta) theta^(-2.5) * exp(-2 / theta)
+q <- Curry(pchisq, df=1)
+
+next_theta <- function(theta0) {
+  theta <- rchisq(1, df=1)
+  alpha <- min(p(theta) * q(theta0) / p(theta0) / q(theta), 1)
+  x <- runif(1)
+  if (x <= alpha) {
+    return(theta)
+  } else {
+    return(theta0)
+  }
+}
+
+thetas <- rep(NA, 500)
+thetas[1] <- 1
+for (i in 2:500) {
+  thetas[i] <- next_theta(thetas[i-1])
+}
+
+plot(thetas, type='l', lwd=2, bty='n', xlab='n', ylab='Theta', cex.lab=1.5, cex.axis=1.5)
+
+# p <- function(x) Curry(dnorm, mean=2, sd=1)(x) + Curry(dnorm, mean=-3, sd=2)(x)
+# Check it out a bimodal distribution
+# Could be cool for simulated annealing or random walk metropolis-hastings or
+# multiple chains or whatever
+@
+
 \begin{comment}
 Plot of first 500 values shows long flat periods---this is called \term{poorly-mixing}. TODO
 
 In contrast, suppose we use \(\chi^2(1)\) as the proposal distribution. This no longer meets the assumptions of Metroplis (\(q(\theta_2) \ne q(\theta_1)\)), so we use Metropolis-Hastings. Now the plot looks morel ike white noise, and we say that it is \term{well-mixing}. TODO
 \end{comment}
-
-\end{document}
 
 \begin{comment}
 

@@ -45,9 +45,7 @@ GenData <- function() {
   }
   
   
-  plot(pref, type="l", xlim=c(T, 1), ylim=c(0.4, 0.6), lwd=2)
-  points(giddyup, col="green", pch=19)
-  points(rasputin, col="red", pch=19)
+  
   
   for (t in 1:T) {
     if (!is.na(giddyup[t]) && !is.na(rasputin[t])) {
@@ -136,4 +134,14 @@ for (i in 2:runs) {
   }
 }
 
-lines(seq(1,100), colMeans(pref))
+results <- list(true=data$pref, giddyup=data$giddyup, rasputin=data$rasputin, gibbs=pref)
+dput(results, "strausswalk.data")
+
+d <- dget('strausswalk.data')
+plot(d$true, type = "l", xlim = c(T, 1), ylim = c(0.4, 0.6), lwd = 2)
+points(d$giddyup, pch = 3)
+points(d$rasputin, pch = 1)
+pref <- d$gibbs
+lines(seq(1, 100), colMeans(pref))
+lines(seq(1, 100), apply(pref, 2, mean) + (apply(pref, 2, sd) * qnorm(0.975)))
+lines(seq(1, 100), apply(pref, 2, mean) - (apply(pref, 2, sd) * qnorm(0.975)))

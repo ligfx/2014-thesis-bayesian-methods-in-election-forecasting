@@ -1,5 +1,6 @@
-\documentclass[thesis.tex]{subfiles}
-\begin{document}
+<<echo=FALSE, cache=FALSE>>=
+set_parent('thesis.Rnw')
+@
 
 \section{Gibbs sampling for estimating house biases}
 
@@ -75,6 +76,16 @@ Finally, for \(\delta_j\), we see that \begin{align}
 	\left(\sum\frac{y_i - \alpha_t}{s_i^2}\right) \Var(\delta_j | \Theta_{-\delta_j})
 \end{align}
 
+<<strausswalks-gibbs, dev='tikz', echo=FALSE, cache=TRUE, fig.cap="Gibbs sampler run on simulated election model. The bold line in the middle is true voter preference, the symbols above and below it are polls conducted by different organizations, and the thin lines are the point estimate of voter preference and its 90\\% CIs.">>=
+data <- dget('strausswalk.data')
+plot(data$true, type="l", xlim=c(100, 1), xlab="Time", ylab="Voter preference", ylim=c(0.4, 0.6), lwd=3, bty='n')
+points(data$giddyup, pch=3)
+points(data$rasputin, pch=1)
+pref <- data$gibbs
+lines(seq(1,100), colMeans(pref))
+lines(seq(1,100), apply(pref, 2, mean) + (apply(pref, 2, sd) * qnorm(0.90)))
+lines(seq(1,100), apply(pref, 2, mean) - (apply(pref, 2, sd) * qnorm(0.90)))
+@
 
 \begin{comment}
 	The conditional distributions for the Gibbs sampler are:
@@ -92,5 +103,3 @@ Thus each $\alpha_t$ is a mix of the any time periods adjoining, $\N(\alpha_{t+1
   \item $\delta_j$: The house biases are a combination of the prior $\N(0, (0.1)^2)$ and the differences of all polls by that organization from true preferences, $\N(y_i - \alpha_t, s_i^2)$.
 \end{enumerate}
 \end{comment}
-
-\end{document}

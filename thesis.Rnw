@@ -1,9 +1,16 @@
 \documentclass[12pt]{article}
 
 \usepackage{thesis}
+\usepackage{subfig}
+\usepackage{tikz}
 \AtEndDocument{\bibliography{references}}
 
 \begin{document}
+
+<<echo=FALSE, cache=FALSE>>=
+options(SweaveHooks=list(fig=function() par(mar=c(5.1, 4.1, 1.1, 2.1))))
+opts_chunk$set(fig.path='figure/graphics-', cache.path='cache/graphics-', fig.align='center', dev='tikz', fig.width=5, fig.height=5, fig.show='hold', cache=TRUE, par=TRUE)
+@
 
 \maketitle
 \tableofcontents
@@ -16,9 +23,11 @@
 \subfile{bayesian-inference}
 \subfile{lock-model}
 \subfile{markov-chains}
-\subfile{metropolis-hastings}
+<<child='metropolis-hastings.Rnw'>>=
+@
 \subfile{gibbs-sampling}
-\subfile{strausswalks}
+<<child='strausswalks.Rnw'>>=
+@
 % \subfile{conclusion}
 
 \end{document}
