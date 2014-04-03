@@ -11,3 +11,7 @@ strausswalk.data
 *.fdb_latexmk
 cache/
 figure/
+*.blg
+thesis.tex
+mcmc.tex
+framed.sty

@@ -1,8 +1,9 @@
 \documentclass[12pt]{article}
 
+\title{Bayesian Methods in Election Forecasting}
+\author{Michael Maltese \\ Pomona College}
+\date{April 4, 2014}
 \usepackage{thesis}
-\usepackage{subfig}
-\usepackage{tikz}
 \AtEndDocument{\bibliography{references}}
 
 \begin{document}
@@ -18,16 +19,14 @@ opts_chunk$set(fig.path='figure/graphics-', cache.path='cache/graphics-', fig.al
 \subfile{introduction}
 \subfile{motivation}
 \subfile{before-opinion-polls}
-\subfile{multilevel-and-state-deviance}
-\subfile{opinion-polls}
 \subfile{bayesian-inference}
-\subfile{lock-model}
-\subfile{markov-chains}
-<<child='metropolis-hastings.Rnw'>>=
+<<child='mcmc.Rnw'>>=
 @
-\subfile{gibbs-sampling}
-<<child='strausswalks.Rnw'>>=
-@
+\section{Multilevel regression models}
+\subsection{Fitting multilevel models with Gibbs samplers}
+\subsection{The Expectation-Maximization algorithm: fitting models with unobserved data}
+\subsection{Fast computational methods for point estimates}
+\subsection{Reference some papers using this}
 % \subfile{conclusion}
 
 \end{document}
