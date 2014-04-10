@@ -5,13 +5,13 @@
 
 \subsection{Incorporating opinion polls}
 
-In the American presidential elections, opinion polls are provided on both the national and state level by an assortment of different organizations. The models in this paper use polling data to estimate an accurate picture of true voter opinion.
+In the American presidential elections, opinion polls are provided on both the national and state level by an assortment of different organizations. The models in this paper use polling data to estimate voter opinion.
 
-Polls come with a few problems that models have to deal with. Polls themselves are not as accurate as them claim to be. People change their minds over the election cycle. Different organizations have different biases and inaccuracies, stemming from either political leanings or different methods of sampling. All organizations have to estimate who will end up voting to weight their polls appropriately.
+Polls come with a few problems that models have to deal with. Polls themselves are not as accurate as them claim to be. People change their minds over the election cycle, making early polls worse estimates of the election than later ones. Different organizations have different biases and inaccuracies, stemming from either political leanings or different methods of sampling. All organizations have to estimate who will end up voting to weight their polls appropriately.
 
 We first examine the model described by \cite{Lock:2010aa}, which uses simple Bayesian inference to incorporate polls based on estimated accuracy some months before Election Day. It doesn't handle organizational biases, but it makes up for it with simplicity and the intuitiveness of the math.
 
-After that, we examine the the model by \cite{Strauss:2007aa}, which uses Gibbs sampling to fit a more involved forecasting model, which estimates organizational biases on the fly.
+After that, we examine the model by \cite{Strauss:2007aa}, which uses Gibbs sampling to fit a more involved forecasting model, which estimates organizational biases on the fly.
 
 \begin{comment}
 - problem: how accurate/useful are they? how many months before campaign (problems 
@@ -32,8 +32,8 @@ After that, we examine the the model by \cite{Strauss:2007aa}, which uses Gibbs 
 
 To incorporate polling data with predictions from fundamentals, we use the method of Bayesian inference.
 
-Given a prior distribution over some outcome, \(\Pr(\theta)\), and data \(\vec{x}\), we use Bayes' Rule \[ \Pr(A | B) = \frac{\Pr(B | A) \Pr (A)}{\Pr(B)} \] to get our posterior distribution. We say that \[
-	p(\theta | \vec{x}) \propto L(\vec{x} | \theta) p(\theta),
+Given a prior distribution over some outcome, \(\Pr(\theta)\), and data \(\vec{x}\), we use Bayes' Rule \[ \Pr(A | B) = \frac{\Pr(B | A) \Pr (A)}{\Pr(B)}, \] where \(A\) and \(B\) are events in some probability space, to get our posterior distribution. We say that \[
+	p(\theta | \vec{x}) \propto p(\vec{x} | \theta) p(\theta),
 \] where we drop the denominator because it doesn't include \(\theta\) in any way and thus becomes part of the uniquely-determined normalization constant for the distribution.
 
 \begin{comment}
@@ -124,7 +124,7 @@ The poll variance is the variance of a mean of \(q\) Bernoulli samples, or of th
 \end{aligned}
 \end{equation}
 
-We can estimate \(\Var(\alpha_t | \alpha_0)\) empirically using polling data and outcomes from past elections, by calculating the empirical variance of polls and subtracting \(\alpha_0 (1 + \alpha_0) / n\) . Let \(\widehat{\alpha}_{t, i}\) and \(n_{t, i}\) denote estimated vote and sample size for the \(i\)-th poll in month \(t\), and \(N_t\) the number of polls in month \(t\). Then \begin{equation}
+We can estimate \(\Var(\alpha_t | \alpha_0)\) empirically using polling data and outcomes from past elections, by calculating the empirical variance of polls and subtracting \(\alpha_0 (1 + \alpha_0) / n\) . Let \(\widehat{\alpha}_{t, i}\) and \(n_{t, i}\) denote the estimated vote and sample size for the \(i\)-th poll in month \(t\), and \(N_t\) the number of polls in month \(t\). Then \begin{equation}
 \begin{aligned}
 \widehat{\Var}(\alpha_t | \alpha_0) = \frac{1}{N_t} \sum_{i=1}^{N_t}\left[ \left( \widehat{\alpha}_{t, i} - \alpha_0\right)^2 - \frac{\alpha_0 (1 - \alpha_0)}{n_{t,i}} \right].
 \end{aligned}

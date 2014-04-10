@@ -1,0 +1,87 @@
+<<echo=FALSE, cache=FALSE>>=
+set_parent('thesis.Rnw')
+@
+
+\section{Multilevel regression models}
+
+\subsection{Fitting multilevel models with Gibbs samplers}
+  
+\cite{Gelman:2007aa} recommend starting multilevel modeling by using fast computational methods for point estimates of variance parameters, and then moving to fitting fully Bayesian model using Gibbs sampling to obtain point and uncertainty estimates for all parameters in the model. In addition, in some cases, the direct computational methods are unstable in the presence of a small number of groups or a complicated model, and we must use the Bayesian approach. We describe first how to use Gibbs sampling to estimate the parameters of these models, as it's the more robust technique, and then provide a rough overview of how a computational method for point estimates can work.  
+ 
+ We follow the method proposed by \cite{Gelman:2007aa}. Given a model with group-level predictors, \begin{align*}
+  y_i = \alpha_{j[i]} + \beta x_i + \varepsilon_i, \quad \varepsilon_i \sim N(0, \sigma^2_y), \\
+  \alpha_j = \gamma_0 + \gamma_1 u_j + \eta_j, \quad \eta_j \sim N(0, \sigma^2_\alpha),
+ \end{align*} we assign priors and run a Gibbs sampler. For a group \(j\), the group level variable \(a_j\) gets assigned a prior \(N(\gamma_0 + \gamma_1u_j, \sigma^2_\alpha)\). Each \(\alpha_j\) differs in the predictor \(u_j\), thus each \(\alpha_j\) has a different prior. Hyperparameters are assigned noninformative uniform priors over the full domain, so the posterior distributions will be nicely distributed. Coefficients will have priors \(Uniform(-\infty, \infty)\), and standard deviations will have priors \(Uniform(0, \infty)\). \cite{Gelman:2007aa} justify using these noninformative priors for building models, and suggest moving to the full Bayesian approach and defining informative prior beliefs later in the process.
+ 
+ We also describe a different instance of the model to illustrate a point: given a varying-intercept, varying-slope model, \[
+  y_i = \alpha_{j[i]} + \beta_{j[i]}x_i + \varepsilon_i,
+ \] we assign a bivariate normal prior to the \((\alpha_j, \beta_j)\) pairs to account for correlation of the parameters within each group.
+ 
+\subsection{The Expectation-Maximization algorithm: fitting models with unobserved data}
+
+  If we only need point estimates, there are faster computational methods available. We describe the Expectation-Maximization algorithm, used for models with missing data or latent variables. This approach nicely fits multilevel modeling.
+
+Given a model \(Y \sim (X, Z)\), where we observe \(Y\) and \(X\) but not \(Z\), we can define an iterative process to find the maximum likelihood estimate for the parameters \(\theta\). For a given previous estimate of the parameters, \(\theta^{(t)}\), let \[
+  \theta^{(t+1)} = \argmax_\theta \E_{z|x, \theta^{(t)}} \log L(\theta | x, z).
+\]  Maximizing the expected log likelihood results in maximizing \(L(\theta | x)\), as follows: we write \(L(\theta | x) = p(x | \theta)\), so \[
+  \log p(x|\theta) = \log p(x, z | \theta) - \log p(z | x, \theta).
+\] Then, the expected value with respect to the unobserved data \(z\) is \begin{align*}
+  \log p(x | \theta) &= E_{z | x, \theta^{(t)}}(\log p(x, z | \theta)) - E_{z | x, \theta^{(t)}}(\log p(z | x, \theta)) \\
+  &= Q(\theta | \theta^{(t)}) - H(\theta | \theta^{(t)}),
+\end{align*} where \(Q\) and \(H\) are defined by the terms they replace. The term \(H(\theta | \theta^{(t)})\) is maximized by \(\theta^{(t)}\), so any value of \(\theta\) which increases \(Q\) also decreases \(H\) and thus increases the log likelihood. We show this by showing that \(H(\theta^{(t)} | \theta^{(t)}) - H(\theta | \theta^{(t)})\) is always positive: \begin{align*}
+  H(\theta^{(t)} | \theta^{(t)}) - H(\theta | \theta^{(t)}) &= \E_{Z | X, \theta^{(t)}}\left( - \log p(Z | X, \theta) / p(Z|X, \theta^{(t)} )\right),
+\intertext{which by Jensen's inequality is}
+&= - \log \E_{Z | X, \theta^{(t)}}\left( p(Z | X, \theta) / p(Z|(X, \theta^{(t)}) \right) \\
+&= 0.
+\end{align*}
+
+\bigskip
+\bigskip
+
+\noindent\textbf{Definition (Jensen's Inequality):} If \(\phi\) is a convex function, then \(\phi(\E(X)) \le \E(\phi(x))\). Let \(x_0 = \E_X(g(x))\). Since \(\phi\) is convex, the line tangent at \(x_0\) is always less than or equal to \(\phi\). In other words, there exist real numbers \(a\) and \(b\) such that, for all \(x \in \R,\, ax + b \le \phi(x)\), and \(ax_0 + b = \phi(x_0)\). Thus, \(\E_X\left(\phi(g(x)\right) \ge \E_X\left(ag(x) + b\right) = a\E_X\left(g(x)\right) + b = ax_0 + b = \phi(x_0) = \phi\left(\E_X(g(x))\right).\)
+ 
+\bigskip
+\bigskip
+ 
+\begin{comment}
+  How do we know that it finds the global likelihood? I guess if there is a global, you're guaranteed to find it?
+\end{comment}
+ 
+\subsection{Fast computational methods for point estimates}
+
+We describe roughly the algorithm from \cite{Bates:aa}, which is implemented in the R package \texttt{nlme}. Given a model like \begin{align*}
+  y_i = x_i\beta + z_ib_i + \varepsilon_i, \quad b_i \sim N(0, \Sigma), \quad \varepsilon \sim N(0, \sigma^2I),
+\end{align*} we apply the E-M algorithm as follows.
+
+Rewrite the covariance matrix of the random effects, \(\Sigma\), as the scaled covariance matrix \(D = \Sigma / \sigma^2\). This can be further decomposed into factors, \(D^{-1} = \Delta'\Delta\). We then use the E-M algorithm to estimate \(\Delta\).
+
+The likelihood of the parameters given the data is given by \begin{align*}
+  L(\Delta| y, x, \beta, \sigma^2) &= \prod p(y_i | b_i, x_i, \beta, \Delta, \sigma^2) p(b_i | x_i, \beta, \Delta, \sigma^2) \\
+  &= \prod \frac{1}{\sqrt{(2\pi \sigma^2)^{n+q} |D|}} \exp\left( -\frac{1}{2\sigma^2}\left\lVert y_i - x_i\beta - z_ib_i \right\rVert^2 -\frac{1}{2\sigma^2}b_i'D^{-1}b_i\right).
+\end{align*} Thus, the log likelihood is \[
+  \log L \propto \sum\left(-\frac{1}{2}\log |D| - \frac{1}{2\sigma^2}b_i'D^{-1}b_i\right).
+\] To find the expected value, we need the conditional distribution of \(b | y\). Note that this is proportional to the full joint distribution, or likelihood of the parameters, as above. The exponential term can be viewed as a penalized least-squares term, and rewritten as \[
+  \left\lVert y_i - x_i\beta - z_ib_i \right\rVert^2 + b_i'D^{-1}b_i = \left\lVert \begin{bmatrix} y_i - x_i\beta \\ 0 \end{bmatrix} - \begin{bmatrix} z_i \\ \Delta \end{bmatrix}b_i \right\rVert^2.
+\] Thus the conditional distribution is \[
+  b_i | y_i \sim N\left(\begin{bmatrix}z_i \\ \Delta \end{bmatrix}^{-1}\begin{bmatrix}y_i - x_i\beta \\ 0 \end{bmatrix}, \,\sigma^2\begin{bmatrix}z_i \\ \Delta\end{bmatrix}^{-1}\begin{bmatrix}z_i \\ \Delta\end{bmatrix}^{-T}   \right),
+\] and the expected log likelihood is \[
+  E_{b|y} \log L = \sum -\frac{1}2 \log |D| - \frac{1}{2\sigma^2} \E\left( b_i'D^{-1}b_i \right).
+\] We claim that \[
+  \frac{1}{2\sigma^2} E\left( b_i'D^{-1}b_i \right) = tr\left( D^{-1} \Var(b_i / \sigma | y_i)  \right) + E(b_i' / \sigma)D^{-1}E(b_i / \sigma),
+\] since \(E(b_i'D^{-1}b_i) = trE(b_i'D^{-1}b_i) = E(tr(b_i'D^{-1} b_i)) = E(tr(D^{-1} b_ib_i')) = tr(D^{-1}(\Var(b_i) + E(b_i)^2)) = tr(D^{-1} \Var(b_i)) + E(b_i)'\Lambda E(b_i) \). We also note that a trace and a squared magnitude are both conceptually squared 2-norms, and combine the terms to get \[
+  - tr(A'D^{-1}A),
+\] where \[
+  A = \begin{bmatrix} E(b_i | y_i) / \sigma \\ \begin{bmatrix} z_i \\ \Delta \end{bmatrix}^{-1} \end{bmatrix}.
+\]
+
+Thus the expected log likelihood is \[
+   E_{b|y} \log L = - M \log |D| + tr(A'D^{-1}A),
+\] which is maximized by \(\Delta = A^{-1} / \sqrt{M}\).
+
+Given \(\Delta\) at each step, we can improve the likelihood further by maximizing the likelihood with respect to \(\beta\) and \(\sigma^2\).  We see that \[
+  \log L(\beta | y_i, x_i, b_i, \Delta) \propto \sum \left\lVert \left( \begin{bmatrix} y_i \\ 0\end{bmatrix} - \begin{bmatrix} z_i \\ \Delta\end{bmatrix} b_i \right) - \begin{bmatrix} x_i \\ 0 \end{bmatrix} \beta \right\rVert^2,
+\] which is a linear model, so \[
+  \hat{\beta}(\Delta) = \left(\begin{bmatrix}x_1 \\ 0 \\ \ldots\end{bmatrix}'\begin{bmatrix}x_1 \\ 0 \\ \ldots \end{bmatrix}\right)^{-1}\begin{bmatrix}x_1 \\ 0 \\ \ldots \end{bmatrix}\left(\begin{bmatrix} y_i \\ 0 \\ \ldots \end{bmatrix} - \begin{bmatrix} z_i \\ \Delta \\ \ldots \end{bmatrix}b \right).
+\] We also have that \[
+  \log L(\sigma^2 | y_i, x_i, b_i, \Delta) \propto -N\log(2\pi \sigma^2) - \frac{\lVert K \rVert^2}{\sigma^2},
+\] which is maximized by \(\hat{\sigma^2} = \rVert k \lVert^2 / N\).

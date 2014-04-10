@@ -14,7 +14,7 @@ A chain is defined by its transition probabilities between states. We denote the
 	\Pr(i \to j).
 \]
 
-Let \(\pi_j(t) = \Pr(X_t = j),\) and let \(\vec{\pi}(t)\) be all state space probabilites at time \(t\). Then by the \term{Chapman-Kolmogorov equation}, we see that \(
+Let \(\pi_j(t) = \Pr(X_t = j),\) and let \(\vec{\pi}(t)\) be all state space probabilites at time \(t\). Then by the \term{Chapman-Kolmogorov equation*}, we see that \(
 	\pi_i(t + 1) = \Pr(X_{t+1} = s_i)
 	= \sum_k \Pr(X_{t+1} = s_i | X_t = s_k)\Pr(X_t = s_k)
 	= \sum_k \Pr(k \to i)\pi_k(t).
@@ -41,13 +41,13 @@ A finite Markov chain that is both irreducible and aperiodic has a stationary di
 		0.5 & 0 & 0.5 \\
 		0.25 & 0.25 & 0.5
 	\end{pmatrix}.
-\] Suppose today is sunny, or \(\vec{\pi}(0) = (0, 1, 0)\). Then \begin{equation}\begin{aligned}
+\] Suppose today is sunny, or \(\vec{\pi}(0) = (0, 1, 0)\). Then \begin{equation*}\begin{aligned}
 	&\vec{\pi}(2) = \vec{\pi}(0) \mat{P}^2 = (0.375, 0.25, 0.375) \\
 	&\vec{\pi}(7) = (0.4, 0.2, 0.4).
-\end{aligned}\end{equation} Or, suppose today is rainy, \(\vec{\pi}(0) = (1, 0, 0)\). Then \begin{equation}\begin{aligned}
+\end{aligned}\end{equation*} Or, suppose today is rainy, \(\vec{\pi}(0) = (1, 0, 0)\). Then \begin{equation*}\begin{aligned}
 	&\vec{\pi}(2) = (0.4375, 0.1875, 0.375) \text{ and} \\
 	&\vec{\pi}(7) = (0.4, 0.2, 0.4),
-\end{aligned}\end{equation} which is converging to a stationary distribution.
+\end{aligned}\end{equation*} which is converging to a stationary distribution.
 
 \bigskip
 \bigskip
@@ -55,7 +55,7 @@ A finite Markov chain that is both irreducible and aperiodic has a stationary di
 \begin{comment}Also, a Markov chain is irreducible, aperiodic, and positive recurrent has a stationary distribution (prove?).
 \end{comment}
 
-A sufficient condition to have a stationary distribution is the \term{detailed balance equation}, or \term{reversibility condition}, \[
+A sufficient condition to have a stationary distribution is the \term{detailed balance equation*}, or \term{reversibility condition}, \[
 	\Pr(j \to k)\pi_j^* = \Pr(k \to j)\pi_k^*,
 \] where \(\vec{\pi}^*\) is the stationary distribution.
 
@@ -148,7 +148,7 @@ The first 500 steps of this algorithm are shown in the left side of Figure \ref{
 
 Suppose that we instead use \(\chi^2_1\) as the candidate distribution. This distribution is no longer symmetric, so we must use Metropolis-Hastings instead of just Metropolis. A resulting sample run is shown in the right side of  Figure \ref{fig:mixing}. The series of samples looks like \textbf{white noise}, and we call this chain \textbf{well-mixing}.
 
-<<mixing, dev='tikz', fig.cap='Poorly-mixing and well-mixing Metropolis chains', out.width='.49\\linewidth', echo=FALSE, cache=TRUE, fig.show='hold'>>=
+<<mixing, fig.cap='Poorly-mixing and well-mixing Metropolis chains', out.width='.49\\linewidth', echo=FALSE, cache=TRUE, fig.show='hold'>>=
 # Poorly-mixing
 set.seed(47)
 
@@ -242,9 +242,9 @@ and thus by the statements on Markov chains above this chain is reversible and $
 
 \subsection{Gibbs sampling}
 
-Consider a bivariate random variable \((x, y)\), for which we want to find the joint distribution \begin{equation}\begin{aligned}
+Consider a bivariate random variable \((x, y)\), for which we want to find the joint distribution \begin{equation*}\begin{aligned}
   p(x, y).
-\end{aligned}\end{equation} It's easier to calculate the conditional distributions \(p(x | y)\) and \(p(y | x)\) than to integrate to get the marginal, \(p(x) = \int p(x, y) dy\).
+\end{aligned}\end{equation*} It's easier to calculate the conditional distributions \(p(x | y)\) and \(p(y | x)\) than to integrate to get the marginal, \(p(x) = \int p(x, y) dy\).
 
 The Gibbs sampling algorithm for two variables is as follows:
 
@@ -252,6 +252,7 @@ The Gibbs sampling algorithm for two variables is as follows:
 	\item Start with some value for \(y\), \(y^{(0)}\);
 	\item Sample \(x^{(0)} \sim p(x | y = y^{(0)})\);
 	\item Sample \(y^{(1)} \sim p(y | x = x^{(0)}\);
+  \item Sample \(x^{(1)} \sim p(x | y = y^{(1)})\);
 	\item And so on.
 \end{enumerate}
 
@@ -262,11 +263,11 @@ In the next section we provide a concrete example of finding the conditional dis
 \bigskip
 \bigskip
 
-\noindent\textbf{Claim:} The Gibbs sampler is a Markov process whose stationary distribution is the actual joint distribution. We show the detailed balance equations hold for sampling \(x\) with regards to the joint distribution \(p(x, y)\), \begin{equation}\begin{aligned}
+\noindent\textbf{Claim:} The Gibbs sampler is a Markov process whose stationary distribution is the actual joint distribution. We show the detailed balance equations hold for sampling \(x\) with regards to the joint distribution \(p(x, y)\), \begin{equation*}\begin{aligned}
 	p(x_2, y) p(x_1| y) = p(x_1, y) p(x_2 | y).
-\end{aligned}\end{equation} By the definition of conditional probability, this is \begin{equation}\begin{aligned}
+\end{aligned}\end{equation*} By the definition of conditional probability, this is \begin{equation*}\begin{aligned}
 	p(x_2 | y) p(y) \cdot p(x_1| y) = p(x_1 | y) p( y) \cdot p(x_2 | y),
-\end{aligned}\end{equation} so we're done.
+\end{aligned}\end{equation*} so we're done.
 
 \subsection{Fitting a random walk preference model with house biases}
 
@@ -286,10 +287,7 @@ We then model opinion polls \(y_i\) as being sampled from popular opinion at tha
 
 \citet{Strauss:2007aa} estimates priors on the shock as \(
 \omega \sim \Uniform(0, (0.01)^2)\) and on house bias as  \(
-\delta_j \sim \N(0, (0.1)^2)\). He justifies this by noting that
-\begin{quote}
-The day-to-day shocks of the campaign are assumed to fall within plus or minus 2 percentage points 95\% of the time (at a maximum). While specific events (e.g., conventions, debates) might cross this threshold, those are the exceptions, not the norms. [Footnote: Even conventions, which last four days, might not produce effects larger than two percentage points per day.] The prior on house effects assumes that 95\% of bias is less than 20\% (in either direction): all reputable polling organizations should easily pass that standard.
-\end{quote}
+\delta_j \sim \N(0, (0.1)^2)\).
 
 \begin{comment}
 \emph{TODO talk about priors at all? Or just reference from before?} He uses the Campbell (\citeyear{Campbell:1992aa,Campbell:2006aa}) prior on the national outcome, predicted off of a number of indicators. This gives \(\alpha_0 \sim \N(0.522, (0.0253)^2)\) for the 2008 election (calculated before polling information is available).
@@ -300,7 +298,7 @@ We obtain posterior distributions from this model using a Gibbs sampler. We firs
 Given our model above, we see our joint distribution \[
 	\Pr(\alpha_0, \ldots, \alpha_n, \delta_i, \ldots, \delta_J, \omega | y_1, \ldots, y_P)) = \Pr(\Theta | D),
 \] where \(n\) is our total number of time periods, \(J\) is the number of organizations, and \(P\) is the number of polls we have data for. For convenience, we let \(D\) denote all data, and \(\Theta\) denote all parameters. By Bayes' Theorem, this is proportional to \[
-	\propto \Pr(D | \Theta ) \Pr(\Theta).
+	\Pr(D | \Theta ) \Pr(\Theta).
 \]
 
 We assume that house biases are independent from popular opinion at each time period, and from the variance of shock to opinion (which may not be true, but is too complicated otherwise). By the definition of conditional probability, \[
@@ -338,7 +336,7 @@ Finally, for \(\delta_j\), we see that \begin{align}
 	\left(\sum\frac{y_i - \alpha_t}{s_i^2}\right) \Var(\delta_j | \Theta_{-\delta_j}).
 \end{align}
 
-<<strausswalks-gibbs, dev='tikz', echo=FALSE, cache=TRUE, fig.cap="Gibbs sampler run on simulated election model. The bold line in the middle is true voter preference, the symbols above and below it are polls conducted by different organizations, and the thin lines are the point estimate of voter preference and its 90\\% CIs.">>=
+<<gibbs, echo=FALSE, cache=TRUE, fig.cap="Gibbs sampler run on simulated election model. The bold line in the middle is true voter preference, the symbols above and below it are polls conducted by different organizations, and the thin lines are the point estimate of voter preference and its 90\\% CIs.">>=
 data <- dget('strausswalk.data')
 plot(data$true, type="l", xlim=c(100, 1), xlab="Time", ylab="Voter preference", ylim=c(0.4, 0.6), lwd=3, bty='n')
 points(data$giddyup, pch=3)
@@ -348,6 +346,8 @@ lines(seq(1,100), colMeans(pref))
 lines(seq(1,100), apply(pref, 2, mean) + (apply(pref, 2, sd) * qnorm(0.90)))
 lines(seq(1,100), apply(pref, 2, mean) - (apply(pref, 2, sd) * qnorm(0.90)))
 @
+
+We graph the results of this model on simulated election data in Figure \ref{fig:gibbs}.
 
 \begin{comment}
 	The conditional distributions for the Gibbs sampler are:

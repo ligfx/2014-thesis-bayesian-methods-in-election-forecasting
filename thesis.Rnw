@@ -1,8 +1,5 @@
 \documentclass[12pt]{article}
 
-\title{Bayesian Methods in Election Forecasting}
-\author{Michael Maltese \\ Pomona College}
-\date{April 4, 2014}
 \usepackage{thesis}
 \AtEndDocument{\bibliography{references}}
 
@@ -22,11 +19,9 @@ opts_chunk$set(fig.path='figure/graphics-', cache.path='cache/graphics-', fig.al
 \subfile{bayesian-inference}
 <<child='mcmc.Rnw'>>=
 @
-\section{Multilevel regression models}
-\subsection{Fitting multilevel models with Gibbs samplers}
-\subsection{The Expectation-Maximization algorithm: fitting models with unobserved data}
-\subsection{Fast computational methods for point estimates}
-\subsection{Reference some papers using this}
+<<child='multilevel.Rnw'>>=
+@
+
 % \subfile{conclusion}
 
 \end{document}
