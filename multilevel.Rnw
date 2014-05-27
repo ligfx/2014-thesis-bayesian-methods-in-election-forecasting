@@ -11,7 +11,7 @@ set_parent('thesis.Rnw')
  We follow the method proposed by \cite{Gelman:2007aa}. Given a model with group-level predictors, \begin{align*}
   y_i = \alpha_{j[i]} + \beta x_i + \varepsilon_i, \quad \varepsilon_i \sim N(0, \sigma^2_y), \\
   \alpha_j = \gamma_0 + \gamma_1 u_j + \eta_j, \quad \eta_j \sim N(0, \sigma^2_\alpha),
- \end{align*} we assign priors and run a Gibbs sampler. For a group \(j\), the group level variable \(a_j\) gets assigned a prior \(N(\gamma_0 + \gamma_1u_j, \sigma^2_\alpha)\). Each \(\alpha_j\) differs in the predictor \(u_j\), thus each \(\alpha_j\) has a different prior. Hyperparameters are assigned noninformative uniform priors over the full domain, so the posterior distributions will be nicely distributed. Coefficients will have priors \(Uniform(-\infty, \infty)\), and standard deviations will have priors \(Uniform(0, \infty)\). \cite{Gelman:2007aa} justify using these noninformative priors for building models, and suggest moving to the full Bayesian approach and defining informative prior beliefs later in the process.
+ \end{align*} we assign priors and run a Gibbs sampler. For a group \(j\), the group level variable \(a_j\) gets assigned a prior \(N(\gamma_0 + \gamma_1u_j, \sigma^2_\alpha)\). Each \(\alpha_j\) differs in the predictor \(u_j\), thus each \(\alpha_j\) has a different prior. Hyperparameters are assigned noninformative uniform priors over the full domain, so the posterior distributions will be nicely distributed. Coefficients will have priors \(\Uniform(-\infty, \infty)\), and standard deviations will have priors \(\Uniform(0, \infty)\). \cite{Gelman:2007aa} justify using these noninformative priors for building models, and suggest moving to the full Bayesian approach and defining informative prior beliefs later in the process.
  
  We also describe a different instance of the model to illustrate a point: given a varying-intercept, varying-slope model, \[
   y_i = \alpha_{j[i]} + \beta_{j[i]}x_i + \varepsilon_i,
@@ -35,13 +35,10 @@ Given a model \(Y \sim (X, Z)\), where we observe \(Y\) and \(X\) but not \(Z\),
 &= 0.
 \end{align*}
 
-\bigskip
-\bigskip
-
-\noindent\textbf{Definition (Jensen's Inequality):} If \(\phi\) is a convex function, then \(\phi(\E(X)) \le \E(\phi(x))\). Let \(x_0 = \E_X(g(x))\). Since \(\phi\) is convex, the line tangent at \(x_0\) is always less than or equal to \(\phi\). In other words, there exist real numbers \(a\) and \(b\) such that, for all \(x \in \R,\, ax + b \le \phi(x)\), and \(ax_0 + b = \phi(x_0)\). Thus, \(\E_X\left(\phi(g(x)\right) \ge \E_X\left(ag(x) + b\right) = a\E_X\left(g(x)\right) + b = ax_0 + b = \phi(x_0) = \phi\left(\E_X(g(x))\right).\)
- 
-\bigskip
-\bigskip
+\begin{lemma*}[Jensen's Inequality]
+If \(\phi\) is a convex function, then \(\phi(\E(X)) \le \E(\phi(x))\).
+\end{lemma*}
+\begin{proof}Let \(x_0 = \E_X(g(x))\). Since \(\phi\) is convex, the line tangent at \(x_0\) is always less than or equal to \(\phi\). In other words, there exist real numbers \(a\) and \(b\) such that, for all \(x \in \R,\, ax + b \le \phi(x)\), and \(ax_0 + b = \phi(x_0)\). Thus, \(\E_X\left(\phi(g(x)\right) \ge \E_X\left(ag(x) + b\right) = a\E_X\left(g(x)\right) + b = ax_0 + b = \phi(x_0) = \phi\left(\E_X(g(x))\right).\) \end{proof}
  
 \begin{comment}
   How do we know that it finds the global likelihood? I guess if there is a global, you're guaranteed to find it?
@@ -68,7 +65,7 @@ The likelihood of the parameters given the data is given by \begin{align*}
   E_{b|y} \log L = \sum -\frac{1}2 \log |D| - \frac{1}{2\sigma^2} \E\left( b_i'D^{-1}b_i \right).
 \] We claim that \[
   \frac{1}{2\sigma^2} E\left( b_i'D^{-1}b_i \right) = tr\left( D^{-1} \Var(b_i / \sigma | y_i)  \right) + E(b_i' / \sigma)D^{-1}E(b_i / \sigma),
-\] since \(E(b_i'D^{-1}b_i) = trE(b_i'D^{-1}b_i) = E(tr(b_i'D^{-1} b_i)) = E(tr(D^{-1} b_ib_i')) = tr(D^{-1}(\Var(b_i) + E(b_i)^2)) = tr(D^{-1} \Var(b_i)) + E(b_i)'\Lambda E(b_i) \). We also note that a trace and a squared magnitude are both conceptually squared 2-norms, and combine the terms to get \[
+\] since \(E(b_i'D^{-1}b_i) = trE(b_i'D^{-1}b_i) = E(tr(b_i'D^{-1} b_i)) = E(tr(D^{-1} b_ib_i')) = tr(D^{-1}(\Var(b_i) + E(b_i)^2)) = tr(D^{-1} \Var(b_i)) + E(b_i)'\Lambda E(b_i) \). We also note that a trace and a squared magnitude are both specific cases of the squared 2-norm, so we can combine the terms to get \[
   - tr(A'D^{-1}A),
 \] where \[
   A = \begin{bmatrix} E(b_i | y_i) / \sigma \\ \begin{bmatrix} z_i \\ \Delta \end{bmatrix}^{-1} \end{bmatrix}.
@@ -81,7 +78,7 @@ Thus the expected log likelihood is \[
 Given \(\Delta\) at each step, we can improve the likelihood further by maximizing the likelihood with respect to \(\beta\) and \(\sigma^2\).  We see that \[
   \log L(\beta | y_i, x_i, b_i, \Delta) \propto \sum \left\lVert \left( \begin{bmatrix} y_i \\ 0\end{bmatrix} - \begin{bmatrix} z_i \\ \Delta\end{bmatrix} b_i \right) - \begin{bmatrix} x_i \\ 0 \end{bmatrix} \beta \right\rVert^2,
 \] which is a linear model, so \[
-  \hat{\beta}(\Delta) = \left(\begin{bmatrix}x_1 \\ 0 \\ \ldots\end{bmatrix}'\begin{bmatrix}x_1 \\ 0 \\ \ldots \end{bmatrix}\right)^{-1}\begin{bmatrix}x_1 \\ 0 \\ \ldots \end{bmatrix}\left(\begin{bmatrix} y_i \\ 0 \\ \ldots \end{bmatrix} - \begin{bmatrix} z_i \\ \Delta \\ \ldots \end{bmatrix}b \right).
+  \widehat{\beta}(\Delta) = \left(\begin{bmatrix}x_1 \\ 0 \\ \ldots\end{bmatrix}'\begin{bmatrix}x_1 \\ 0 \\ \ldots \end{bmatrix}\right)^{-1}\begin{bmatrix}x_1 \\ 0 \\ \ldots \end{bmatrix}\left(\begin{bmatrix} y_i \\ 0 \\ \ldots \end{bmatrix} - \begin{bmatrix} z_i \\ \Delta \\ \ldots \end{bmatrix}b \right).
 \] We also have that \[
   \log L(\sigma^2 | y_i, x_i, b_i, \Delta) \propto -N\log(2\pi \sigma^2) - \frac{\lVert K \rVert^2}{\sigma^2},
-\] which is maximized by \(\hat{\sigma^2} = \rVert k \lVert^2 / N\).
+\] which is maximized by \(\widehat{\sigma^2} = \rVert k \lVert^2 / N\).

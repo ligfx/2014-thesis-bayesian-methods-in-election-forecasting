@@ -1,4 +1,4 @@
-\documentclass[12pt]{article}
+\documentclass[12pt,twoside]{article}
 
 \usepackage{thesis}
 \AtEndDocument{\bibliography{references}}
@@ -6,11 +6,30 @@
 \begin{document}
 
 <<echo=FALSE, cache=FALSE>>=
-options(SweaveHooks=list(fig=function() par(mar=c(5.1, 4.1, 1.1, 2.1))))
-opts_chunk$set(fig.path='figure/graphics-', cache.path='cache/graphics-', fig.align='center', dev='tikz', fig.width=5, fig.height=5, fig.show='hold', cache=TRUE, par=TRUE)
+options(SweaveHooks=list(fig=function() {
+  par(mar=c(5.1, 4.1, 1.1, 2.1))
+}))
+opts_chunk$set(fig.path='figure/graphics-', cache.path='cache/graphics-', fig.align='center', fig.width=5, fig.height=5, fig.show='hold', cache=TRUE, par=TRUE)
 @
 
-\maketitle
+%\maketitle
+\thispagestyle{empty}
+\begin{center}
+  \LARGE
+  \textbf{Bayesian Methods in Election Forecasting} \par \bigskip
+  
+  \Large
+  Michael Maltese
+  \par \medskip
+  
+  \large
+  Pomona College, Department of Mathematics
+  \par \medskip
+  
+  April 4, 2014
+  
+\end{center}
+
 \tableofcontents
 
 \subfile{introduction}

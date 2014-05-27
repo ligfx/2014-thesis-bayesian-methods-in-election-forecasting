@@ -49,32 +49,33 @@ Luckily, we don't have to necessarily write out probability density functions an
 \bigskip
 \bigskip
 
-\noindent\textbf{Normal with unknown mean:} Given a distribution for data $x \sim \N(\mu, \tau^{-1})$ and a prior on the mean $\mu \sim \N(\mu_0, \tau_0^{-1})$, we see that: \begin{align*}
-\Pr(\mu | x, \tau) &\propto \Pr(x | \mu, \tau)\Pr(\mu) \\
-&\propto \exp\left( -\frac{\tau(x-\mu)^2}{2} \right)\exp\left( -\frac{\tau_0(\mu - \mu_0)^2}{2} \right) \\
-&= \exp\left[ -\frac12\left( \tau x^2 - 2x\mu\tau + \tau\mu^2 + \tau_0\mu^2 - 2\mu\mu_0\tau_0 + \tau_0\mu_0^2 \right) \right]
-\intertext{All terms not involving $\mu$ can be dropped, because they'll work out in the normalization constant.}
-&\propto \exp\left[  -\frac12(\mu(\tau + \tau_0) -2\mu(x\tau + \mu_0\tau_0)  \right] \\
-&= \exp\left[  -\frac12(\tau_0 + \tau)\left(  \mu - \frac{x\tau + \mu_0\tau_0}{\tau_0 + \tau}  \right)^2\right]
-\end{align*}
-So the posterior distribution is: \[
+\begin{lemma*}[Normal with unknown mean]
+Given a distribution for data $x \sim \N(\mu, \tau^{-1})$ and a prior on the mean $\mu \sim \N(\mu_0, \tau_0^{-1})$, the posterior distribution is: \[
 \mu | x, \tau \sim \N\left(  \frac{x\tau + \mu_0\tau_0}{\tau_0 + \tau}, \text{ }\tau_0 + \tau  \right).
 \]
-
-\bigskip
-\bigskip
-
-\noindent\textbf{Normal with unknown precision:} Given a a distribution for $n$ i.i.d. data points $x_i \sim \N(\mu, \tau)$, and a prior on the precision $\tau \sim \Gamma(\alpha, \beta)$, we see that: \begin{align*}
-\Pr(\tau | \vec{x}, \mu) &\propto \Pr(\vec{x} | \tau, \mu)\Pr(\tau) \\
-&\propto \prod\left(\tau^{\frac{1}{2}}\exp\left(  -\frac{\tau(x_i - \mu)^2}{2}  \right)\right) \tau^{\alpha-1}\exp(-\beta\tau) \\
-&= \tau^{\alpha + \frac{n}{2} - 1}\exp\left(  -\tau\left(\beta + \frac{\sum(x_i + \mu)^2}{2}\right)  \right)
+\end{lemma*}
+\begin{proof} We see that: \begin{align*}
+\Pr(\mu | x, \tau) &\propto \Pr(x | \mu, \tau)\Pr(\mu) \\
+&\propto \exp\left( -\frac{\tau(x-\mu)^2}{2} \right)\exp\left( -\frac{\tau_0(\mu - \mu_0)^2}{2} \right) \\
+&= \exp\left[ -\frac12\left( \tau x^2 - 2x\mu\tau + \tau\mu^2 + \tau_0\mu^2 - 2\mu\mu_0\tau_0 + \tau_0\mu_0^2 \right) \right],
+\intertext{and all terms not involving $\mu$ can be dropped, as they'll work out in the normalization constant:}
+&\propto \exp\left[  -\frac12(\mu(\tau + \tau_0) -2\mu(x\tau + \mu_0\tau_0)  \right] \\
+&= \exp\left[  -\frac12(\tau_0 + \tau)\left(  \mu - \frac{x\tau + \mu_0\tau_0}{\tau_0 + \tau}  \right)^2\right].
 \end{align*}
-So the posterior distribution is \[
+\end{proof}
+
+\begin{lemma*}[Normal with unknown precision]
+Given a a distribution for $n$ i.i.d. data points $x_i \sim \N(\mu, \tau)$, and a prior on the precision $\tau \sim \Gamma(\alpha, \beta)$, the posterior distribution is \[
 \tau | x, \mu \sim \Gamma\left(  \alpha + \frac{n}{2}, \text{ } \beta + \frac{\sum(x_i + \mu)^2}{2}  \right).
 \]
-
-\bigskip
-\bigskip
+\end{lemma*}
+\begin{proof}
+We see that, \begin{align*}
+\Pr(\tau | \vec{x}, \mu) &\propto \Pr(\vec{x} | \tau, \mu)\Pr(\tau) \\
+&\propto \prod\left(\tau^{\frac{1}{2}}\exp\left(  -\frac{\tau(x_i - \mu)^2}{2}  \right)\right) \tau^{\alpha-1}\exp(-\beta\tau) \\
+&= \tau^{\alpha + \frac{n}{2} - 1}\exp\left(  -\tau\left(\beta + \frac{\sum(x_i + \mu)^2}{2}\right)  \right).
+\end{align*}
+\end{proof}
 
 \subsection{Modeling variance in vote intention before an election}
 
@@ -83,14 +84,14 @@ In this section we examine the model proposed by \cite{Lock:2010aa}. The model e
 
 Let \(\alpha_t\) denote the true national proportion of people who intend to vote for the Democratic candidate \(t\) months before the election, and let \(\widehat{\alpha}_t\) denote an estimate of this value from a poll.
 
-The poll variance is the variance of a mean of \(q\) Bernoulli samples, or of the ratio of a Binomial sample and \(q\). We see this because, for a Binomial(\(q\), \(\mu\)) sample, \(qy\), \begin{equation}\begin{aligned}
+The poll variance is the variance of a mean of \(q\) Bernoulli samples, or of the ratio of a Binomial sample and \(q\). We see this because, for a Binomial(\(q\), \(\mu\)) sample, \(qy\), \begin{equation*}\begin{aligned}
   \Var(y) = \frac{1}{q^2}qy(1-y) = \frac{y(1-y)}{q}.
-\end{aligned}\end{equation}
+\end{aligned}\end{equation*}
 
-\bigskip
-\bigskip
-
-\noindent\textbf{Definition (Law of total expectation):} \(\E (X) = \E(\E(X | Y))\), by\begin{equation}
+\begin{lemma*}[Law of total expectation]
+ \(\E (X) = \E(\E(X | Y))\).
+ \end{lemma*}
+ \begin{proof}\begin{equation*}
 \begin{aligned}
 	\E(\E(X | Y)) &= \int \left[\int x p(x | y)\, dx\right] p(y)\, dy \\
 	&= \iint x p(x, y)\, dx dy \\
@@ -98,23 +99,23 @@ The poll variance is the variance of a mean of \(q\) Bernoulli samples, or of th
 	&= \int x p(x) \, dx \\
 	&= \E(X).
 \end{aligned}
-\end{equation}
+\end{equation*}
+\end{proof}
 
-\bigskip
-
-\noindent\textbf{Definition (Law of total variance, or decomposition of variance):} \(\Var(Y) = \E(\Var(Y | X)) + \Var(\E(Y | X))\), by \begin{equation}
+\begin{lemma*}[Law of total variance, or decomposition of variance]
+\(\Var(Y) = \E(\Var(Y | X)) + \Var(\E(Y | X))\).
+\end{lemma*}
+\begin{proof}\begin{equation*}
 \begin{aligned}
 	\Var(Y) &= \E(Y^2) - \E(Y)^2 \\
 	&= \E(\E(Y^2 | X)) - \E(\E(Y | X))^2 \\
 	&= \E\left(\Var(Y|X) + \E(Y | X)^2\right) - \E(\E(Y | X))^2 \\
 	&= \E(\Var(Y | X)) + \Var(\E(Y | X)).
 \end{aligned}
-\end{equation}
+\end{equation*}
+\end{proof}
 
-\bigskip
-\bigskip
-
-\noindent So, by the laws of total variance and total expectation, we see that \begin{equation}\begin{aligned}
+So, by the laws of total variance and total expectation, we see that \begin{equation*}\begin{aligned}
 	\Var(\widehat{\alpha_t} | \alpha_0)
 	&= \E(\Var(\widehat{\alpha_t} | \alpha_t) | \alpha_0) + \Var(\E(\widehat{\alpha_t} | \alpha_t) | \alpha_0) \\
 	&= \E\left(\frac{\alpha_t(1- \alpha_t)}{n} | \alpha_0\right) + \Var(\alpha_t | \alpha_0) \\
@@ -122,31 +123,31 @@ The poll variance is the variance of a mean of \(q\) Bernoulli samples, or of th
 	&= \frac{\E(\alpha_t | \alpha_0) + \E(\alpha_t | \alpha_0)^2}{n} + \frac{n-1}{n}\Var(\alpha_t | \alpha_0) \\
 	&\approx \frac{\alpha_0 (1 + \alpha_0)}{n} + \Var(\alpha_t | \alpha_0).
 \end{aligned}
-\end{equation}
+\end{equation*}
 
-We can estimate \(\Var(\alpha_t | \alpha_0)\) empirically using polling data and outcomes from past elections, by calculating the empirical variance of polls and subtracting \(\alpha_0 (1 + \alpha_0) / n\) . Let \(\widehat{\alpha}_{t, i}\) and \(n_{t, i}\) denote the estimated vote and sample size for the \(i\)-th poll in month \(t\), and \(N_t\) the number of polls in month \(t\). Then \begin{equation}
+We can estimate \(\Var(\alpha_t | \alpha_0)\) empirically using polling data and outcomes from past elections, by calculating the empirical variance of polls and subtracting \(\alpha_0 (1 + \alpha_0) / n\) . Let \(\widehat{\alpha}_{t, i}\) and \(n_{t, i}\) denote the estimated vote and sample size for the \(i\)-th poll in month \(t\), and \(N_t\) the number of polls in month \(t\). Then \begin{equation*}
 \begin{aligned}
 \widehat{\Var}(\alpha_t | \alpha_0) = \frac{1}{N_t} \sum_{i=1}^{N_t}\left[ \left( \widehat{\alpha}_{t, i} - \alpha_0\right)^2 - \frac{\alpha_0 (1 - \alpha_0)}{n_{t,i}} \right].
 \end{aligned}
-\end{equation}
+\end{equation*}
 
-We also want to know \(\Var(\widehat{d}_{s, t} | d_{s, 0}),\) the variance in the relative position \(t\) months before the election of state \(s\). By a similar process, we estimate this using data from the last few election cycles, \begin{equation}\begin{aligned}
+We also want to know \(\Var(\widehat{d}_{s, t} | d_{s, 0}),\) the variance in the relative position \(t\) months before the election of state \(s\). By a similar process, we estimate this using data from the last few election cycles, \begin{equation*}\begin{aligned}
 	\widehat{\Var}(d_{s, t} | d_{s, 0}) = \frac{1}{elections \cdot 50} \sum_{y}^{elections} \sum_{s=1}^{50} \left[ \left( \widehat{d}_{s, y, t} - d_{s, y, 0}\right)^2 - \frac{\alpha_{s, y, 0} (1 - \alpha_{s, y, 0})}{n_{s, y, t}} \right].
-\end{aligned}\end{equation} Polls do not give us \(\widehat{d}_{s, y, t}\), so we  estimate it as \(\widehat{\alpha}_{s, y, t} - \widehat{\alpha}_{y, t}\). 
+\end{aligned}\end{equation*} Polls do not give us \(\widehat{d}_{s, y, t}\), so we  estimate it as \(\widehat{\alpha}_{s, y, t} - \widehat{\alpha}_{y, t}\). 
 
 Now we have our estimates on variance, dependent only on time \(t\).
 
-From before, we have our poll data \begin{equation}\begin{aligned}
+From before, we have our poll data \begin{equation*}\begin{aligned}
 \widehat{d_{s, t}} | d_{s, 0} \sim \Normal\left(d_{s, 0}, \frac{\alpha_{s, 0} (1 - \alpha_{s, 0})}{n_{s, t}} + \Var(d_{s, t} | d_{s, 0}\right),
-\end{aligned}\end{equation} where we justify normality by the size of the polls. We also have a prior on state deviance from the national outcome, from our multilevel model, \begin{equation}\begin{aligned}
+\end{aligned}\end{equation*} where we justify normality by the size of the polls. We also have a prior on state deviance from the national outcome, from our multilevel model, \begin{equation*}\begin{aligned}
 d_{s, 0} | d_{s, previous} \sim \Normal(d_{s, previous} | \Var(d_{s, 0} | d_{s, previous})).
-\end{aligned}\end{equation} Because these are both Normal distributions, we end up with a conjugate posterior for state deviation \(d_{s, 0} | data\).
+\end{aligned}\end{equation*} Because these are both Normal distributions, we end up with a conjugate posterior for state deviation \(d_{s, 0} | data\).
 
-We have a distribution for poll data, \begin{equation}\begin{aligned}
+We have a distribution for poll data, \begin{equation*}\begin{aligned}
 \widehat{\alpha}_t | \alpha_0 \sim \Normal\left( \alpha_0, \frac{\alpha_0 (1 - \alpha_0)}{n_t} + \Var(\alpha_t | \alpha_0) \right),
-\end{aligned}\end{equation} and some prior estimated from fundamentals \begin{equation}\begin{aligned}
+\end{aligned}\end{equation*} and some prior estimated from fundamentals \begin{equation*}\begin{aligned}
 	\alpha_0 \sim \Normal(\mu_0, \sigma_0^2),
-\end{aligned}\end{equation} so again we end up with a simple conjugate posterior.
+\end{aligned}\end{equation*} so again we end up with a simple conjugate posterior.
 
 \begin{comment}
 	TODO Should be weighted average on the Var(d_st, d_s0) stuff.

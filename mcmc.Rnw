@@ -14,7 +14,7 @@ A chain is defined by its transition probabilities between states. We denote the
 	\Pr(i \to j).
 \]
 
-Let \(\pi_j(t) = \Pr(X_t = j),\) and let \(\vec{\pi}(t)\) be all state space probabilites at time \(t\). Then by the \term{Chapman-Kolmogorov equation*}, we see that \(
+Let \(\pi_j(t) = \Pr(X_t = j),\) and let \(\vec{\pi}(t)\) be all state space probabilites at time \(t\). Then by the \term{Chapman-Kolmogorov equation}, we see that \(
 	\pi_i(t + 1) = \Pr(X_{t+1} = s_i)
 	= \sum_k \Pr(X_{t+1} = s_i | X_t = s_k)\Pr(X_t = s_k)
 	= \sum_k \Pr(k \to i)\pi_k(t).
@@ -32,10 +32,8 @@ We call a Markov chain \term{aperiodic} if the number of steps to move between a
 
 A finite Markov chain that is both irreducible and aperiodic has a stationary distribution.
 
-\bigskip
-\bigskip
-
-\noindent\textbf{Example:} Suppose \(\Pr(rain | rain) = 0.5\), \(\Pr(sun | rain) = 0.25\), \(\Pr(cloud | rain) = 0.25\), and \[
+\begin{example*}
+Suppose \(\Pr(rain | rain) = 0.5\), \(\Pr(sun | rain) = 0.25\), \(\Pr(cloud | rain) = 0.25\), and \[
 	\mat{P} = \begin{pmatrix}
 		0.5 & 0.25 & 0.25 \\
 		0.5 & 0 & 0.5 \\
@@ -48,14 +46,12 @@ A finite Markov chain that is both irreducible and aperiodic has a stationary di
 	&\vec{\pi}(2) = (0.4375, 0.1875, 0.375) \text{ and} \\
 	&\vec{\pi}(7) = (0.4, 0.2, 0.4),
 \end{aligned}\end{equation*} which is converging to a stationary distribution.
-
-\bigskip
-\bigskip
+\end{example*}
 
 \begin{comment}Also, a Markov chain is irreducible, aperiodic, and positive recurrent has a stationary distribution (prove?).
 \end{comment}
 
-A sufficient condition to have a stationary distribution is the \term{detailed balance equation*}, or \term{reversibility condition}, \[
+A sufficient condition to have a stationary distribution is the \term{detailed balance equation}, or \term{reversibility condition}, \[
 	\Pr(j \to k)\pi_j^* = \Pr(k \to j)\pi_k^*,
 \] where \(\vec{\pi}^*\) is the stationary distribution.
 
@@ -73,13 +69,13 @@ We extend this to a continuous state space by \[
 
 \begin{comment}
 
-\begin{definition}
+% \begin{definition}
   A Markov chain is irreducible if, for any two possible values, when started at one it is possible the chain will eventually take on the other. In other words, for any two possible values $i$ and $j$, there exists $m > 0$ such that \( \Pr(X_m = i | X_0 = j) > 0 \).
-\end{definition}
+% \end{definition}
 
-\begin{definition}
+% \begin{definition}
   A Markov chain is periodic if it only takes on certain values with some period. In other words, for any two possible values $i$ and $j$, a timestep $m$, and a period $d$, \( \Pr(X_m = i | X_0 = j) = 0 \) unless $m$ is divisible by $d$. If $d = 1$, then we say the chain is aperiodic.
-\end{definition}
+% \end{definition}
 
 %% TODO example about combinations of numbers from Gabe's notes?
 
@@ -120,21 +116,19 @@ The \term{Metropolis-Hastings} algorithm extends the above to work in the case w
   \alpha = \min \left[ \frac{f(\theta^*)}{f(\theta^{(t-1)})}\frac{q(\theta^* \to \theta^{(t-1)})}{q(\theta^{(t-1)} \to \theta^*)},\, 1 \right].
 \] In the case where \(q\) is symmetric, this becomes simply Metropolis.
 
-\bigskip
-\bigskip
-
-\noindent\textbf{Claim:} Metropolis-Hastings generates a Markov chain whose stationary distribution is \(p\). We show it satisfies the detailed balance equation. Since we sample from \(q(\theta_1 \to \theta_2)\), and accept with probability \(\alpha(\theta_1, \theta_2)\), \[
+\begin{theorem*}The Metropolis-Hastings algorithm generates a Markov chain with stationary distribution \(p\).
+\end{theorem*}
+\begin{proof}
+ We show Metropolis-Hastings satisfies the detailed balance equation. Since we sample from \(q(\theta_1 \to \theta_2)\), and accept with probability \(\alpha(\theta_1, \theta_2)\), \[
   \Pr(\theta_1 \to \theta_2) = q(\theta_1 \to \theta_2)  \alpha(\theta_1, \theta_2) = q(\theta_1 \to \theta_2) \min \left[\frac{p(\theta_2)}{p(\theta_1)}\frac{q(\theta_2 \to \theta_1)}{q(\theta_1 \to \theta_2)} ,\, 1\right].
 \] We want to show that \[
   \Pr(\theta_1 \to \theta_2) p(\theta_1) = \Pr(\theta_2 \to \theta_1)p(\theta_2),
 \] or \[
   q(\theta_1 \to \theta_2)\alpha(\theta_1, \theta_2) p(\theta_1) = q(\theta_2 \to \theta_1) \alpha(\theta_2, \theta_1) p(\theta_2).
 \] Assume without loss of generality that \(\alpha(\theta_1, \theta_2) < 1\). Then terms cancel and we see the equality.
+\end{proof}
 
-\bigskip
-\bigskip
-
-\noindent\textbf{Example:} Consider the distribution, \[
+\begin{example*} Consider the distribution, \[
   p(\theta) = C \cdot \theta^{-n/2} \cdot \exp \left(-\frac{a}{2\theta}\right),
 \] with \(n = 5\) and \(a = 4\).
 
@@ -147,6 +141,8 @@ Now, run the Metropolis algorithm: Let \(\theta^{(0)} = 1\), and suppose \(\thet
 The first 500 steps of this algorithm are shown in the left side of Figure \ref{fig:mixing}. Note the long flat periods, where all candidate values are rejected. This chain is called \textbf{poorly-mixing}.
 
 Suppose that we instead use \(\chi^2_1\) as the candidate distribution. This distribution is no longer symmetric, so we must use Metropolis-Hastings instead of just Metropolis. A resulting sample run is shown in the right side of  Figure \ref{fig:mixing}. The series of samples looks like \textbf{white noise}, and we call this chain \textbf{well-mixing}.
+
+\end{example*}
 
 <<mixing, fig.cap='Poorly-mixing and well-mixing Metropolis chains', out.width='.49\\linewidth', echo=FALSE, cache=TRUE, fig.show='hold'>>=
 # Poorly-mixing
@@ -260,14 +256,12 @@ The general multivariate version is analagous.
 
 In the next section we provide a concrete example of finding the conditional distributions for the Gibbs sampler. In general, we find the full joint distribution, which by definition is proportional to the conditional distribution of each variable. Then for each conditional distribution, we simply drop unneeded terms into the normalization constant and hope to get a conjugate posterior.
 
-\bigskip
-\bigskip
-
-\noindent\textbf{Claim:} The Gibbs sampler is a Markov process whose stationary distribution is the actual joint distribution. We show the detailed balance equations hold for sampling \(x\) with regards to the joint distribution \(p(x, y)\), \begin{equation*}\begin{aligned}
+\begin{theorem*} The Gibbs sampler is a Markov process with stationary distribution the true joint distribution.\end{theorem*}
+\begin{proof}We show the detailed balance equations hold for sampling \(x\) with regards to the joint distribution \(p(x, y)\), \begin{equation*}\begin{aligned}
 	p(x_2, y) p(x_1| y) = p(x_1, y) p(x_2 | y).
 \end{aligned}\end{equation*} By the definition of conditional probability, this is \begin{equation*}\begin{aligned}
 	p(x_2 | y) p(y) \cdot p(x_1| y) = p(x_1 | y) p( y) \cdot p(x_2 | y),
-\end{aligned}\end{equation*} so we're done.
+\end{aligned}\end{equation*} so we're done.\end{proof}
 
 \subsection{Fitting a random walk preference model with house biases}
 
@@ -336,7 +330,7 @@ Finally, for \(\delta_j\), we see that \begin{align}
 	\left(\sum\frac{y_i - \alpha_t}{s_i^2}\right) \Var(\delta_j | \Theta_{-\delta_j}).
 \end{align}
 
-<<gibbs, echo=FALSE, cache=TRUE, fig.cap="Gibbs sampler run on simulated election model. The bold line in the middle is true voter preference, the symbols above and below it are polls conducted by different organizations, and the thin lines are the point estimate of voter preference and its 90\\% CIs.">>=
+<<gibbs, echo=FALSE, cache=TRUE, fig.cap="Gibbs sampler run on simulated election model. The bold line in the middle is true voter preference, the symbols above and below it are polls conducted by different organizations, and the thin lines are the point estimate of voter preference and its 90\\% CIs.", fig.pos="h">>=
 data <- dget('strausswalk.data')
 plot(data$true, type="l", xlim=c(100, 1), xlab="Time", ylab="Voter preference", ylim=c(0.4, 0.6), lwd=3, bty='n')
 points(data$giddyup, pch=3)

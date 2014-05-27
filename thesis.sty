@@ -1,4 +1,4 @@
-\usepackage[margin=1.25in]{geometry}
+\usepackage[bottom=1in]{geometry}
 
 %%
 %% For subfiles
@@ -11,7 +11,12 @@
 
 \usepackage{xcolor}
 
-\usepackage{hyperref}
+\usepackage[pdftex]{hyperref}
+\hypersetup{
+    pdftitle = {Bayesian Methods in Election Forecasting},
+    pdfauthor = {Michael Maltese}
+}
+
 \definecolor{darkblue}{cmyk}{1.0,0.7,0,0}
 \hypersetup{
   colorlinks,
@@ -79,8 +84,6 @@
         }
 \endgroup
 
-\newtheorem{definition}{Definition}[section]
-\newtheorem{claim}{Claim}[section]
 \usepackage{amsmath}
 \usepackage{amsthm}
 \usepackage{amssymb}
@@ -96,18 +99,36 @@
 
 \newcommand\term[1]{\textbf{#1}}
 
-\title{Bayesian Methods in Election Forecasting}
-\author{Michael Maltese \\ Pomona College}
+
 \date{April 4, 2014}
-\markright{\textit{\thetitle}\hfill \quad}
+\markboth{\quad\hfill\textit{Bayesian Methods in Election Forecasting}}{\textit{Michael Maltese}\hfill \quad}
 \pagestyle{myheadings}
 
 \renewcommand\bibsection{\section*{Bibliography}\addcontentsline{toc}{section}{Bibliography}}
 
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+
 \renewcommand\vec[1]{\boldsymbol{#1}}
 \newcommand\mat[1]{\boldsymbol{#1}}
 
+\usepackage[font=small,labelfont=bf]{caption}
 \usepackage{comment}
+
+\usepackage{amsthm}
+\newtheorem{theorem}{Theorem}
+\newtheorem*{theorem*}{Theorem}
+\newtheorem{lemma}{Lemma}
+\newtheorem*{lemma*}{Lemma}
+\newtheorem*{proposition*}{Proposition}
+\newtheorem{definition}{Definition}
+\newtheorem*{definition*}{Definition}
+
+
+\theoremstyle{definition}
+\newtheorem*{example*}{Example}
+
 
 \usepackage{subfig}
 \usepackage{tikz}

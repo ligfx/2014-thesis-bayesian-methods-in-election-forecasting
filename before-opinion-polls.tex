@@ -26,11 +26,11 @@ In this case, we want to estimate variance in state deviations from the national
   \frac{1}{N}\sum_{y=1}^N (d_{s, y} - d_{s, y - 1})^2,
 \] where \(N\) denotes the total number of election cycles we're looking at and \(d_{s, y}\) denotes the deviation from the national vote in election cycle \(y\) for state \(s\).
 
-The multilevel model, then, looks like \begin{equation}
+The multilevel model, then, looks like \begin{equation*}
 	\left[(d_{s, y} - d_{s, y - 1})^2\right]_i \sim \mu + \gamma_s + \epsilon_i, \quad
 	\gamma_s \sim \N(0, \sigma_\gamma^2), \quad
 	\epsilon_i \sim \N(0, \sigma_\epsilon^2),
-\end{equation} where \(\mu + \gamma_s\) will give us the estimated variance in deviations for state \(s\). We describe this class of model further in Section 6.
+\end{equation*} where \(\mu + \gamma_s\) will give us the estimated variance in deviations for state \(s\). We describe this class of model further in Section 6.
 
 % TODO: Graph?
 
