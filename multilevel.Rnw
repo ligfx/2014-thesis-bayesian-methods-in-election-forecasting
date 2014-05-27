@@ -36,7 +36,7 @@ Given a model \(Y \sim (X, Z)\), where we observe \(Y\) and \(X\) but not \(Z\),
 \end{align*}
 
 \begin{lemma*}[Jensen's Inequality]
-If \(\phi\) is a convex function, then \(\phi(\E(X)) \le \E(\phi(x))\).
+If \(\phi\) is a convex function, then \(\phi(\E(x)) \le \E(\phi(x))\).
 \end{lemma*}
 \begin{proof}Let \(x_0 = \E_X(g(x))\). Since \(\phi\) is convex, the line tangent at \(x_0\) is always less than or equal to \(\phi\). In other words, there exist real numbers \(a\) and \(b\) such that, for all \(x \in \R,\, ax + b \le \phi(x)\), and \(ax_0 + b = \phi(x_0)\). Thus, \(\E_X\left(\phi(g(x)\right) \ge \E_X\left(ag(x) + b\right) = a\E_X\left(g(x)\right) + b = ax_0 + b = \phi(x_0) = \phi\left(\E_X(g(x))\right).\) \end{proof}
  
@@ -78,7 +78,7 @@ Thus the expected log likelihood is \[
 Given \(\Delta\) at each step, we can improve the likelihood further by maximizing the likelihood with respect to \(\beta\) and \(\sigma^2\).  We see that \[
   \log L(\beta | y_i, x_i, b_i, \Delta) \propto \sum \left\lVert \left( \begin{bmatrix} y_i \\ 0\end{bmatrix} - \begin{bmatrix} z_i \\ \Delta\end{bmatrix} b_i \right) - \begin{bmatrix} x_i \\ 0 \end{bmatrix} \beta \right\rVert^2,
 \] which is a linear model, so \[
-  \widehat{\beta}(\Delta) = \left(\begin{bmatrix}x_1 \\ 0 \\ \ldots\end{bmatrix}'\begin{bmatrix}x_1 \\ 0 \\ \ldots \end{bmatrix}\right)^{-1}\begin{bmatrix}x_1 \\ 0 \\ \ldots \end{bmatrix}\left(\begin{bmatrix} y_i \\ 0 \\ \ldots \end{bmatrix} - \begin{bmatrix} z_i \\ \Delta \\ \ldots \end{bmatrix}b \right).
+  \widehat{\beta}(\Delta) = \left(\begin{bmatrix}x_1 \\ 0 \\ \cdots\end{bmatrix}'\begin{bmatrix}x_1 \\ 0 \\ \cdots \end{bmatrix}\right)^{-1}\begin{bmatrix}x_1 \\ 0 \\ \cdots \end{bmatrix}\left(\begin{bmatrix} y_i \\ 0 \\ \cdots \end{bmatrix} - \begin{bmatrix} z_i \\ \Delta \\ \cdots \end{bmatrix}b \right).
 \] We also have that \[
   \log L(\sigma^2 | y_i, x_i, b_i, \Delta) \propto -N\log(2\pi \sigma^2) - \frac{\lVert K \rVert^2}{\sigma^2},
 \] which is maximized by \(\widehat{\sigma^2} = \rVert k \lVert^2 / N\).
