@@ -1,9 +1,7 @@
-citations/
 *.bbl
 *.toc
 *.synctex.gz
 *.log
-*.pdf
 *-concordance.tex
 *-tikzDictionary
 strausswalk.data
@@ -12,6 +10,9 @@ strausswalk.data
 cache/
 figure/
 *.blg
+Rplots.pdf
+thesis.pdf
 thesis.tex
 mcmc.tex
 framed.sty
+.DS_Store

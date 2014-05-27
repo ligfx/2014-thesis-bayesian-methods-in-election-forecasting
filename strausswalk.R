@@ -137,11 +137,20 @@ for (i in 2:runs) {
 results <- list(true=data$pref, giddyup=data$giddyup, rasputin=data$rasputin, gibbs=pref)
 dput(results, "strausswalk.data")
 
-d <- dget('strausswalk.data')
-plot(d$true, type = "l", xlim = c(T, 1), ylim = c(0.4, 0.6), lwd = 2)
-points(d$giddyup, pch = 3)
-points(d$rasputin, pch = 1)
-pref <- d$gibbs
-lines(seq(1, 100), colMeans(pref))
-lines(seq(1, 100), apply(pref, 2, mean) + (apply(pref, 2, sd) * qnorm(0.975)))
-lines(seq(1, 100), apply(pref, 2, mean) - (apply(pref, 2, sd) * qnorm(0.975)))
+# d <- dget('strausswalk.data')
+# plot(d$true, type = "l", xlim = c(T, 1), ylim = c(0.4, 0.6), lwd = 2)
+# points(d$giddyup, pch = 3)
+# points(d$rasputin, pch = 1)
+# pref <- d$gibbs
+# lines(seq(1, 100), colMeans(pref))
+# lines(seq(1, 100), apply(pref, 2, mean) + (apply(pref, 2, sd) * qnorm(0.975)))
+# lines(seq(1, 100), apply(pref, 2, mean) - (apply(pref, 2, sd) * qnorm(0.975)))
+
+data <- dget('strausswalk.data')
+plot(data$true, type="l", xlim=c(100, 1), xlab="Time", ylab="Voter preference", ylim=c(0.4, 0.6), lwd=3, bty='n')
+points(data$giddyup, pch=3)
+points(data$rasputin, pch=1)
+pref <- data$gibbs
+lines(seq(1,100), colMeans(pref))
+lines(seq(1,100), apply(pref, 2, mean) + (apply(pref, 2, sd) * qnorm(0.90)))
+lines(seq(1,100), apply(pref, 2, mean) - (apply(pref, 2, sd) * qnorm(0.90)))

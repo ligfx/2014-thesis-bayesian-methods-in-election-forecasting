@@ -315,20 +315,20 @@ For \(\alpha_0\), we see that \[
 
 For \(\omega\), we see that \[
 	\Pr(\omega^2 | \Theta_{-\omega}, D) \propto \Pr(\omega) \prod_{t=1}^n \Pr(\alpha_t | \alpha_{t-1}, \omega),
-\] or, letting \(\mathbb{I}_\omega = \Pr(\omega\)), \begin{align}
+\] or, letting \(\mathbb{I}_\omega = \Pr(\omega\)), \begin{align*}
 	&\propto \mathbb{I}_\omega \cdot \prod_{t=1}^n (\omega^2)^{-1/2} \exp\left[ - (\omega^2)^{-1} \frac{(\alpha_t - \alpha_{t-1})^2}{2} \right] \\
 	&= \mathbb{I}_\omega \cdot (\omega^2)^{-n/2} \exp\left[ - (\omega^2)^{-1} \frac{\sum_{t=1}^n(\alpha_t - \alpha_{t-1})^2}{2} \right],
-\end{align} which is the probability density function of an Inverse Gamma distribution, restricted to some range. Thus we say \[
+\end{align*} which is the probability density function of an Inverse Gamma distribution, restricted to some range. Thus we say \[
 	\omega^2 \sim \mathbb{I}_\omega \cdot \InvGamma\left( \frac{n - 2}{2},\, \frac{\sum_{t=1}^n(\alpha_t - \alpha_{t-1})^2}{2} \right).
 \] When sampling this, we can the assumption that the Inverse Gamma will not have much mass outside of the prior on \(\omega\), and can be approximated by dropping all samples outside of \(\mathbb{I}_\omega\) and resampling, or we can use another Markov Chain Monte Carlo method such as Metropolis-Hastings or rejection sampling.
 
-Finally, for \(\delta_j\), we see that \begin{align}
+Finally, for \(\delta_j\), we see that \begin{align*}
 	\Pr(\delta_j | \Theta_{-\delta_j}, D) \propto \Pr(\delta_j) \prod \Pr(y_i | \alpha_0, \delta_j)
-\end{align} for all polls \(y_i\) from the organization indexed by \(j\). Given a prior \(\delta_j \sim \Normal(0, d^2)\), we see we have a conjugate posterior, so  \(\delta_j | \Theta_{-\delta_j} \) has a Normal distribution with variance \begin{align}
+\end{align*} for all polls \(y_i\) from the organization indexed by \(j\). Given a prior \(\delta_j \sim \Normal(0, d^2)\), we see we have a conjugate posterior, so  \(\delta_j | \Theta_{-\delta_j} \) has a Normal distribution with variance \begin{align*}
 	\left(\frac{1}{d^2} + \sum\frac{1}{s_i^2}\right)^{-1}
-\end{align} and mean \begin{align}
+\end{align*} and mean \begin{align*}
 	\left(\sum\frac{y_i - \alpha_t}{s_i^2}\right) \Var(\delta_j | \Theta_{-\delta_j}).
-\end{align}
+\end{align*}
 
 <<gibbs, echo=FALSE, cache=TRUE, fig.cap="Gibbs sampler run on simulated election model. The bold line in the middle is true voter preference, the symbols above and below it are polls conducted by different organizations, and the thin lines are the point estimate of voter preference and its 90\\% CIs.", fig.pos="h">>=
 data <- dget('strausswalk.data')

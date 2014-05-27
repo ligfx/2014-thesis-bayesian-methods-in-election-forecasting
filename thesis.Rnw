@@ -6,6 +6,7 @@
 \begin{document}
 
 <<echo=FALSE, cache=FALSE>>=
+library(knitr)
 options(SweaveHooks=list(fig=function() {
   par(mar=c(5.1, 4.1, 1.1, 2.1))
 }))
